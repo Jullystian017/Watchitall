@@ -1,35 +1,54 @@
 # 🎬 WATCHITALL — Premium Movie Streaming Platform
 
-**WATCHITALL** adalah web streaming film premium seperti Netflix, dibangun menggunakan sistem pembayaran **Midtrans** serta integrasi API film dari **TMDB**.  
-Hanya pengguna yang sudah **membayar** yang dapat menonton film.
+**WATCHITALL** is a full-featured movie streaming web app inspired by Netflix.  
+Built with **HTML, CSS, and JavaScript**, integrated with **Firebase** for authentication and database, and **Midtrans** for secure payment processing.  
+
+Only users who have **paid for a subscription** can stream movies.
 
 ---
 
-## 🚀 Fitur Utama
+## 🚀 Features
 
-### 🔐 Autentikasi & Akun
-- Login & register menggunakan **email dan password**
-- Sistem **client-side authentication** (Supabase)
-- Hanya pengguna **premium (sudah bayar)** yang bisa menonton film
+### 🔐 Authentication & User Accounts
+- Login and register using **email & password** (Firebase Auth)
+- Authenticated sessions persist with Firebase
+- Access to streaming is restricted to **premium users only**
 
-### 💳 Sistem Pembayaran
-- Terintegrasi dengan **Midtrans** (sandbox mode)
-- Mendukung status transaksi: pending, success, failed
-- Data langganan disimpan di **Firebase**
+### 💳 Payment System
+- Integrated with **Midtrans (Sandbox Mode)**
+- Handles transaction states: *pending*, *success*, *failed*
+- Updates user subscription status automatically
 
-### 🎞️ Streaming Film
-- Nonton film langsung dari API eksternal (TMDB)
-- Hanya pengguna premium yang bisa menonton video
+### 🎞️ Movie Streaming
+- Watch movies directly from **external APIs (TMDB)**
+- Only accessible by premium accounts
+- Supports **multi-language** and **subtitles**
 
-### 🧭 Dashboard Pengguna
-- Riwayat tontonan
-- Daftar film terakhir ditonton
-- Rekomendasi film berdasarkan genre
+### 🧭 User Dashboard
+- View **watch history**
+- See **recently watched** movies
+- Personalized **recommendations by genre**
 
-### 🏠 Halaman Beranda
-- Slider film seperti Netflix
-- Film populer/trending (Top 10)
-- Kategori produksi (Disney+, Marvel, dll)
-- Rekomendasi film untuk kamu
+### 🏠 Homepage
+- Netflix-style movie slider
+- Top 10 trending movies
+- Production categories (Disney+, Marvel, etc.)
+- Recommended movies based on preferences
 
 ---
+
+## 🧱 Tech Stack
+
+| Layer | Technology |
+|--------|-------------|
+| **Frontend** | HTML, CSS, JavaScript |
+| **Database** | Firebase Firestore |
+| **Auth** | Firebase Authentication |
+| **Payment** | Midtrans API |
+| **Movie API** | TMDB (The Movie Database) |
+| **Hosting** | Firebase Hosting |
+
+---
+
+## 🗂️ Folder Structure
+
