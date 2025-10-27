@@ -1,11 +1,11 @@
-# 🎬 WATCHITALL — Premium Movie Streaming Platform
+# WATCHITALL — Premium Movie Streaming Platform
 
 **WATCHITALL** is a full-featured movie streaming web app inspired by Netflix.  
 Built with **HTML, CSS, and JavaScript**, integrated with **Firebase** for authentication and database, and **Midtrans** for secure payment processing.  
 
 Only users who have **paid for a subscription** can stream movies.
 
-## 🚀 Features
+## Features
 
 ### 🔐 Authentication & User Accounts
 - Login and register using **email & password** (Firebase Auth)
@@ -33,7 +33,7 @@ Only users who have **paid for a subscription** can stream movies.
 - Production categories (Disney+, Marvel, etc.)
 - Recommended movies based on preferences
 
-## 🧱 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |--------|-------------|
