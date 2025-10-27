@@ -48,7 +48,4 @@ Only users who have **paid for a subscription** can stream movies.
 | **Movie API** | TMDB (The Movie Database) |
 | **Hosting** | Firebase Hosting |
 
----
-
-## 🗂️ Folder Structure
 
