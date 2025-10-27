@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link Swiper's CSS -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <title>Home</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script type="module">
+  import { auth, db } from '../js/firebase-init.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+  const docSnap = await getDoc(doc(db, "users", user.email));
+  if (!docSnap.exists() || !docSnap.data().isPaid) {
+    window.location.href = 'payment.html';
+  }
+  
+}); 
+  
+</script>
+    
+</head>
+<body>
+    <header>
+        <div class="Logo">
+            <img src="../assets/image/logo.png" alt="" class="Logo">
+        </div>
+        <input type="checkbox" id="nav_check" hidden>
+        <nav>
+            <ul>
+                <li><a href="index.html" >Home</a></li>
+                <li><a href="tv-show.html" class="active">TV Show</a></li>
+                <li><a href="movies.html">Movies</a></li>
+                <li><a href="release.html">Release</a></li>
+                <div class="nav-indicator"></div> 
+            </ul>
+        </nav>
+        <div class="icon">
+    <div class="search-container">
+        <i class='bx bx-search search-icon'></i>
+        <input type="text" class="search-input" placeholder="search movies">
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <div class="user-container">
+        <i class='bx bx-user' id="userIcon"></i>
+        <div class="user-dashboard" id="userDashboard">
+            <ul>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="watchlist.html">Watchlist</a></li>
+                <li><a href="history.html">History</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="menu-toggle" id="menuToggle">
+        <i class='bx bx-menu'></i>
+    </div>
+    </header>
+
+    <script type="module">
+  import { auth } from '../js/firebase-init.js';
+  import { signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+  document.getElementById("logout-btn").addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      await signOut(auth);
+
+      // Bersihkan localStorage
+      localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("email");
+
+      // Tampilkan notifikasi logout
+      alert("Anda telah logout dari akun Anda.");
+
+      // Redirect ke unpaid.html
+      window.location.href = "unpaid.html";
+    } catch (error) {
+      alert("Gagal logout: " + error.message);
+    }
+  });
+</script>
+
+
+    <section class="Home-swiper" id="Home">
+  <div class="swiper mySectionSwiper">
+    <div class="swiper-wrapper" id="swiper-content"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<section class="just-release-section">
+  <h2 class="just-release-title">Top Rated TV Shows</h2>
+  <div class="slider-wrapper">
+    <!-- Tombol Kiri -->
+    <button class="slide-btn left" onclick="scrollSlider('top-rated-tv-container', 'left')">&#10094;</button>
+
+    <!-- Kontainer Card -->
+  <div id="top-rated-tv-container" class="just-release-container">
+    <!-- JS akan inject card di sini -->
+  </div>
+
+  <!-- Tombol Kanan -->
+    <button class="slide-btn right" onclick="scrollSlider('top-rated-tv-container', 'right')">&#10095;</button>
+  </div>
+</section>
+
+    <section class="popular-week-section">
+        <h2 class="popular-week-title">Popular TV Shows of the Month</h2>
+        <div class="slider-wrapper">
+          <!-- Tombol Kiri -->
+          <button class="slide-btn left" onclick="scrollSlider('popular-week-container', 'left')">&#10094;</button>
+
+          <!-- Kontainer Card -->
+        <div class="popular-week-container" id="popular-week-container"></div>
+
+        <!-- Tombol Kanan -->
+          <button class="slide-btn right" onclick="scrollSlider('popular-week-container', 'right')">&#10095;</button>
+        </div>
+    </section>
+
+    <section class="featured-section" id="featured-section">
+  <div class="featured-left" id="featured-left">
+    <!-- Konten dinamis TV Show di-inject di sini -->
+  </div>
+  <div class="featured-carousel" id="featured-carousel">
+    <!-- Kartu-kartu TV Show dinamis di-inject di sini -->
+  </div>
+</section>
+
+<section class="just-release-section">
+  <h2 class="just-release-title">Drama TV Shows</h2>
+  <div class="slider-wrapper">
+    <!-- Tombol Kiri -->
+    <button class="slide-btn left" onclick="scrollSlider('drama-container', 'left')">&#10094;</button>
+
+    <!-- Kontainer Card -->
+  <div id="drama-container" class="just-release-container"></div>
+
+  <!-- Tombol Kanan -->
+    <button class="slide-btn right" onclick="scrollSlider('drama-container', 'right')">&#10095;</button>
+  </div>
+</section>
+
+
+
+
+<section class="just-release-section">
+  <h2 class="just-release-title">Comedy TV Shows</h2>
+  <div class="slider-wrapper">
+    <!-- Tombol Kiri -->
+    <button class="slide-btn left" onclick="scrollSlider('comedy-container', 'left')">&#10094;</button>
+
+    <!-- Kontainer Card -->
+  <div id="comedy-container" class="just-release-container"></div>
+
+  <!-- Tombol Kanan -->
+    <button class="slide-btn right" onclick="scrollSlider('comedy-container', 'right')">&#10095;</button>
+  </div>
+</section>
+
+<section class="just-release-section">
+  <h2 class="just-release-title">Cartoon TV Shows</h2>
+  <div class="slider-wrapper">
+    <!-- Tombol Kiri -->
+    <button class="slide-btn left" onclick="scrollSlider('animation-container', 'left')">&#10094;</button>
+
+    <!-- Kontainer Card -->
+  <div id="animation-container" class="just-release-container"></div>
+
+  <!-- Tombol Kanan -->
+    <button class="slide-btn right" onclick="scrollSlider('animation-container', 'right')">&#10095;</button>
+  </div>
+</section>
+
+<section class="just-release-section">
+  <h2 class="just-release-title">Anime TV Shows</h2>
+  <div class="slider-wrapper">
+    <!-- Tombol Kiri -->
+    <button class="slide-btn left" onclick="scrollSlider('anime-container', 'left')">&#10094;</button>
+
+    <!-- Kontainer Card -->
+  <div id="anime-container" class="just-release-container"></div>
+
+  <!-- Tombol Kanan -->
+    <button class="slide-btn right" onclick="scrollSlider('anime-container', 'right')">&#10095;</button>
+  </div>
+</section>
+
+<section class="just-release-section">
+  <h2 class="just-release-title">Upcoming TV Shows</h2>
+  <div class="slider-wrapper">
+    <!-- Tombol Kiri -->
+    <button class="slide-btn left" onclick="scrollSlider('upcoming-tv-container', 'left')">&#10094;</button>
+
+    <!-- Kontainer Card -->
+  <div id="upcoming-tv-container" class="just-release-container"></div>
+
+  <!-- Tombol Kanan -->
+    <button class="slide-btn right" onclick="scrollSlider('upcoming-tv-container', 'right')">&#10095;</button>
+  </div>
+</section>
+
+<section class="just-release-section">
+        <h2 class="just-release-title">Just Release</h2>
+        <div class="slider-wrapper">
+    <!-- Tombol Kiri -->
+    <button class="slide-btn left" onclick="scrollSlider('just-release-container', 'left')">&#10094;</button>
+
+    <!-- Kontainer Card -->
+        <div class="just-release-container" id="just-release-container"></div>
+
+        <!-- Tombol Kanan -->
+    <button class="slide-btn right" onclick="scrollSlider('just-release-container', 'right')">&#10095;</button>
+  </div>
+    </section>
+
+    
+
+
+
+<div class="bottom-line"></div>
+   <footer class="main-footer">
+  <div class="footer-top">
+    <div class="footer-left">
+      <p class="footer-desc">
+        Our platform is very affordable & features<br>
+        best updated movies all around the world.
+      </p>
+    </div>
+    <div class="footer-right">
+      <nav class="footer-nav">
+        <a href="#">Home</a> /
+        <a href="movies.html">Movie</a> /
+        <a href="tv-show.html">TV Show</a> /
+        <a href="release.html">Release</a>
+      </nav>
+      <div class="footer-socials">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-links">
+      <a href="privacy.html">Privacy policy</a>
+      <a href="terms-of-use.html">Term of service</a>
+      <a href="FAQ.html">FAQ</a>
+      <a href="help-center.html">Help Center</a>
+
+    </div>
+    
+    <span class="footer-copy">© 2025</span>
+  </div>
+</footer>
+
+<!-- CSS -->
+<style>
+ @import url('https://fonts.googleapis.com/css2?family=Judson:ital@1&family=Manrope:wght@200..800&display=swap');
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+    font-family: "Manrope", sans-serif;
+}
+body{
+    background: black;
+    color: white;
+    overflow-x: hidden;
+}
+img{
+    width: 100%;
+}
+
+/* NAV */
+header{
+  width: 100%;
+  height: 90px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 30px;
+  border-radius: 0 0 10px 10px;
+  margin: 0 auto;
+  backdrop-filter: blur(4px);
+  position: absolute;
+  top: 0;
+  z-index: 10;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.Logo {
+  padding-top: 8px;
+  width: 150px;
+  height: auto;
+}
+
+
+
+nav ul{
+    display: flex;
+    background: transparent;
+    position: relative;
+}
+
+nav ul li a{
+    color: #BFBFBF;
+    display: block;
+    margin: 5px 8px;
+    padding: 12px 18px;
+    transition: 0.2s;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+nav ul li a:hover{
+    color: white;
+    text-shadow: 0 0 10px #EFB036;
+}
+
+nav ul li a.active {
+    color: #EFB036;
+    font-weight: 900;
+    text-shadow: 0 0 10px #EFB036;
+    padding: 12px 18px; 
+}
+
+i{
+    color: white;
+}
+
+.icon i{
+    font-size: 24px;
+    padding-left: 20px;
+    transition: transform 0.3s ease;
+}
+
+.icon i:hover {
+    transform: scale(1.2);
+    color: #EFB036;
+}
+
+.nav-indicator {
+    position: absolute;
+    height: 100%;
+    background-color: #EFB036;
+    border-radius: 8px;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 0;
+    transition: all 0.3s ease;
+}
+
+.search-container {
+    position: relative;
+    display: inline-block;
+}
+
+.search-icon {
+    font-size: 24px;
+    padding-left: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.search-icon.active {
+    color: #EFB036;
+}
+
+.search-input {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    padding-right: 5px;
+}
+
+.search-input.active {
+    width: 250px;
+    padding: 8px 15px 8px 35px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    opacity: 1;
+    pointer-events: all;
+    right: -10px;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 8px;
+    padding: 10px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+}
+
+.search-results.active {
+    display: block;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: rgba(239, 176, 54, 0.2);
+}
+
+.search-result-item img {
+    width: 50px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.search-result-info {
+    flex: 1;
+}
+
+.search-result-info h4 {
+    margin: 0;
+    font-size: 14px;
+    color: white;
+}
+
+.search-result-info p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    color: #BFBFBF;
+}
+
+.search-result-type {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.search-result-type.movie {
+    background-color: #EFB036;
+    color: black;
+}
+
+.search-result-type.tv {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Jarak antar elemen */
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.search-icon {
+    font-size: 20px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.search-input {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.user-container {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .bx-user {
+      font-size: 24px;
+    }
+
+    .user-dashboard {
+      position: absolute;
+      top: 30px;
+      right: 0;
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      display: none;
+      padding: 10px;
+      width: 180px;
+      z-index: 100;
+    }
+
+    .user-dashboard ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .user-dashboard ul li {
+      margin: 10px 0;
+    }
+
+    .user-dashboard ul li a {
+      text-decoration: none;
+      color: #eee;
+      font-weight: 500;
+      display: block;
+      padding: 6px 8px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .user-dashboard ul li a:hover {
+      color: #EFB036;
+      background: rgba(239, 176, 54, 0.1);
+    }
+
+/* HOME SWIPPER */
+.home-swiper{
+  position: relative;
+  padding: 4.5rem 0 1.5rem;
+}
+
+.swiper {
+    
+    width: 100%;
+    height: 100vh;
+}
+  
+.swiper-slide {
+    height: 100vh;
+    color: white;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-start;
+    transition: transform 5s ease;
+}
+
+.swiper-slide-active {
+    transform: scale(1.05);
+}
+
+.swiper-slide-active .container {
+    opacity: 1;
+    transform: translateY(0);
+}
+  
+.swiper-slide::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.1));
+    z-index: 1;
+}
+
+.swiper-slide::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2));
+  z-index: 1;
+}
+
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(60%);
+}
+
+.swiper-slide .content {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  z-index: 2;
+}
+  
+.container {
+    padding-left: 3rem;
+    align-content: end;
+    z-index: 2;
+    max-width: 700px;
+    text-align: left;
+    color: white;
+    justify-content: flex-start;
+    margin-top: 18rem;
+    transition: all 0.8s ease;
+}
+
+.container h1 {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+  
+.container p {
+    font-size: 18px;
+    color: #ccc;
+    margin-top: 10px;
+    margin-bottom: 1 0px;
+}
+
+.info{
+    font-size: 18px;
+    opacity: 50%;
+}
+
+.buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: left;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.buttons button {
+  padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+}
+
+.buttons button.play:hover {
+    background-color: #f7c158;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(239, 176, 54, 0.4);
+}
+
+.buttons button.save:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+}
+
+button.play {
+    background: #EFB036;
+    color: white;
+}
+
+button.save {
+    background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.buttons button a {
+    text-decoration: none;
+    color: white;
+}
+
+.swiper-pagination-bullet {
+    width: 5px !important; 
+    height: 5px !important;
+    border-radius: 50% !important; 
+    background: white !important;
+    opacity: 1 !important;
+    transition: 0.3s ease;
+    justify-content: right;
+    text-align: right;
+}
+
+.swiper-pagination {
+    justify-content: right;
+    text-align: right;
+    padding-right: 35px;
+    padding-bottom: 20px;
+}
+
+.swiper-pagination-bullet-active {
+    background: #EFB036 !important;
+}
+
+.slider-wrapper {
+  position: relative;
+}
+
+.scrollable {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding: 1rem 2rem; /* biar ada jarak dari panah */
+}
+
+.scrollable::-webkit-scrollbar {
+  display: none;
+}
+
+.slide-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 12px 19px;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+  transition: 0.3s;
+}
+
+.slide-btn.left {
+  left: 0;
+}
+
+.slide-btn.right {
+  right: 0;
+}
+
+.slide-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 30px #EFB036;
+}
+
+/* JUST RELEASE */
+.just-release-section {
+    padding: 2rem;
+}
+
+.just-release-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.just-release-container {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scrollbar-width: none;
+    padding: 1rem;
+    
+}
+
+.just-release-card {
+    max-width: 190px;
+    cursor: pointer;
+    border-radius: 5px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    
+}
+
+.just-release-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 10px #EFB036;
+}
+
+.just-release-card img {
+    width: 190px;
+    height: 270px;
+    object-fit: cover;
+}
+
+.just-release-info {
+    padding: 0.5rem 0.75rem;
+}
+
+.just-release-info h3 {
+    margin: 0;
+    font-size: 1rem;
+     margin: 0;
+    font-size: 1rem;
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+    line-height: 1.2;
+}
+
+.just-release-info p {
+    font-size: 0.78rem;
+    color: #ccc;
+    margin-top: 4px;
+}
+
+.just-release-info span {
+    opacity: 50%;
+}
+
+/* POPULAR MOVIE */
+.popular-week-section {
+    padding: 2rem;
+    color: #fff;
+}
+
+.popular-week-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.popular-week-container {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 1rem;
+}
+
+.popular-week-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rank-number {
+    font-size: 5rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 10px #EFB036;
+}
+
+.popular-card {
+    width: 21rem;
+    height: 10rem;
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.5s;
+    cursor: pointer;
+}
+
+.popular-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 10px #EFB036;
+}
+
+.popular-week-card img {
+    width: 7rem;
+    height: 10rem;
+    border-radius: 12px;
+}
+
+.popular-week-info .badge {
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+}
+
+.popular-week-info {
+    padding-left: 1rem;
+}
+
+.popular-week-info h3 {
+    margin: 0.3rem 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.popular-week-info p {
+    font-size: 0.85rem;
+}
+
+/* BANNER */
+.featured-section {
+  position: relative;
+  width: 100%;
+  min-height: 90vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 61px 101px 41px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  transition: background-image 0.5s ease-in-out;
+}
+
+.featured-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.featured-left, .featured-carousel {
+  position: relative;
+  z-index: 2;
+}
+
+.featured-left {
+  flex: 1;
+  max-width: 50%;
+  right: 40px;
+}
+
+.featured-left h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.featured-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+
+    z-index: 10;
+}
+
+.featured-left p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.featured-left .buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.featured-left .buttons a {
+  padding: 10px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.featured-left .buttons a:first-child {
+  background: #EFB036;
+  color: black;
+}
+
+.featured-left .buttons a:last-child {
+ 
+  color: white;
+}
+
+.featured-carousel {
+  flex: 0 0 55%;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-left: 35px;
+}
+
+.featured-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.featured-card {
+  position: relative;
+  flex: 0 0 auto;
+   width: 180px;
+  height: 280px;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  background: #111;
+  margin: 10px;
+}
+
+.featured-card.active {
+  outline: 2px solid #EFB036;
+  box-shadow: 0 0 12px rgba(239, 176, 54, 0.6);
+  z-index: 2;
+  transform: scale(1.05);
+}
+
+.featured-card img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay info di atas image */
+.featured-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.2));
+  padding: 9px;
+  color: white;
+}
+
+.featured-info-overlay h4 {
+  font-size: 0.95rem;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.featured-info-overlay p {
+  font-size: 0.8rem;
+  color: #ccc;
+  margin: 0;
+}
+
+/* POPULAR MOVIE & TV SECTION */
+.section-title {
+  font-size: 2rem;
+  margin: 2rem 0 1.5rem;
+  padding-left: 2rem;
+}
+
+.popular-movie-container,
+.popular-tv-container {
+ display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 2rem;
+  padding-left: 3rem;
+  scrollbar-width: none;
+}
+
+.popular-movie-container::-webkit-scrollbar,
+.popular-tv-container::-webkit-scrollbar {
+  display: none;
+}
+
+.popular-card-item {
+     max-width: 190px;
+    cursor: pointer;
+    border-radius: 5px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    margin-top: -1.5rem;
+}
+
+.popular-card-item img {
+  width: 190px;
+ height: 265px;
+ object-fit: cover;
+  border-radius: 5px;
+}
+
+.popular-card-info {
+  padding: 0.5rem;
+  color: white;
+}
+
+.popular-card-info h4 {
+ font-size: 16px;
+  margin: 5px 0;
+  padding-right: 5px;
+  color: #fff;
+}
+
+.popular-card-info p {
+  font-size: 13px;
+  color: #ccc;
+  padding-right: 5px;
+}
+
+.popular-card-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 10px #EFB036;
+}
+
+.indonesian-movie-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 2rem;
+  padding-left: 3rem;
+  scrollbar-width: none;
+}
+
+.indonesian-card-item {
+    max-width: 190px;
+    cursor: pointer;
+    border-radius: 5px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    margin-top: -1.5rem;
+}
+
+.indonesian-card-item img {
+ width: 190px;
+ height: 265px;
+ object-fit: cover;
+  border-radius: 5px;
+}
+
+.indonesian-card-info h4 {
+  font-size: 16px;
+  margin: 5px 0;
+  padding-right: 5px;
+  color: #fff;
+}
+
+.indonesian-card-info p {
+  font-size: 14px;
+  color: #ddd;
+  padding-right: 5px;
+}
+
+.indonesian-card-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 10px #EFB036;
+}
+
+.bottom-line {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, 
+              rgba(239,176,54,0) 0%, 
+              rgba(239,176,54,0.6) 50%, 
+              rgba(239,176,54,0) 100%);
+  margin: 40px 0 0;
+}
+
+.main-footer {
+ background-color: #141414;
+  color: white;
+  padding: 40px 60px;
+  font-family: sans-serif;
+}
+
+.footer-right a:hover {
+  text-decoration: underline;
+  color: #EFB036;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding-bottom: 20px;
+}
+
+.footer-left {
+  flex: 1;
+  min-width: 250px;
+}
+
+.footer-desc {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: white;
+  max-width: 340px; /* batasi lebar supaya teks turun ke baris berikutnya */
+  word-break: break-word;
+}
+
+
+.footer-right {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+.footer-nav a {
+  color: white;
+  margin: 0 5px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.footer-socials {
+  display: flex;
+  flex-direction: row;
+  gap: 10px; /* jarak antar icon */
+}
+
+
+.footer-socials a {
+  color: #ffffff;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-socials a:hover {
+  background-color: #EFB036;
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin-top: 20px;
+  color: white;
+}
+
+.footer-links a {
+  margin-right: 20px;
+  text-decoration: none;
+  color: white;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+  color: #EFB036;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-right {
+    align-items: flex-start;
+  }
+
+  .footer-nav {
+    margin-top: 10px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-desc {
+    font-size: 16px;
+  }
+
+  .footer-nav a {
+    font-size: 13px;
+  }
+
+  .footer-socials a {
+    font-size: 18px;
+  }
+}
+
+/* Hamburger menu (hidden on desktop) */
+.menu-toggle {
+    display: none;
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Responsive styles for nav */
+@media (max-width: 768px) {
+
+  .featured-section {
+    flex-direction: column;
+    padding: 40px 40px 20px;
+    text-align: center;
+  }
+
+  .featured-left {
+    max-width: 100%;
+    margin-bottom: 2rem;
+    right: 0;
+  }
+
+  .featured-carousel {
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+  .menu-toggle {
+    display: block;
+  }
+
+  nav {
+    width: 100%;
+  }
+
+  nav ul {
+    position: absolute;
+    top: 90px;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.95);
+    width: 100%;
+    display: none;
+    border-radius: 8px;
+    left: 0;
+    right: 0;
+    z-index: 99;
+  }
+
+  nav ul.show {
+    display: flex;
+  }
+
+  nav ul li a {
+    width: 100%;
+  }
+
+  .nav-indicator {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .swiper-slide,
+  .swiper {
+    height: 70vh;
+  }
+
+  .container h1 {
+    font-size: 28px;
+  }
+
+  .container p {
+    font-size: 16px;
+  }
+
+  .buttons button {
+    font-size: 0.9em;
+    padding: 8px 12px;
+  }
+
+  .just-release-container,
+  .popular-month-container {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .just-release-card,
+  .popular-card,
+  .popular-card-item {
+    max-width: 140px;
+  }
+
+  .just-release-card img,
+  .popular-card-item img {
+    width: 140px;
+    height: 210px;
+  }
+
+  .popular-month-card img {
+    width: 5rem;
+    height: 7rem;
+  }
+
+  .popular-card {
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .rank-number {
+    font-size: 3rem;
+  }
+
+  .slide-btn {
+    padding: 8px 12px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin-top: 8rem;
+    padding-left: 1rem;
+  }
+
+  .swiper-slide,
+  .swiper {
+    height: 60vh;
+  }
+
+  .featured-left h1 {
+    font-size: 1.5rem;
+  }
+
+  .featured-left p {
+    font-size: 0.9rem;
+  }
+
+  .just-release-title,
+  .popular-month-title,
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  .popular-card {
+    width: 100%;
+  }
+
+  .slide-btn {
+    display: none;
+  }
+
+  .just-release-section,
+  .popular-month-section {
+    padding: 1rem;
+  }
+}
+</style>
+
+
+
+<!-- Swiper JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+const API_KEY = 'c4d40593b012ddf8fd9bbafe6c7b3a63'; 
+
+let featuredList = [];
+
+const apiKey = 'c4d40593b012ddf8fd9bbafe6c7b3a63';
+const baseUrl = 'https://api.themoviedb.org/3';
+const imgUrl = 'https://image.tmdb.org/t/p/original';
+const imgThumb = 'https://image.tmdb.org/t/p/w500';
+
+const urlParams = new URLSearchParams(window.location.search);
+const movieId = urlParams.get('id');
+
+// Search Functionality
+const searchIcon = document.querySelector('.search-icon');
+const searchInput = document.querySelector('.search-input');
+const searchResults = document.getElementById('searchResults');
+let searchTimeout;
+
+// Toggle search input
+searchIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchInput.classList.toggle('active');
+    searchIcon.classList.toggle('active');
+    
+    if (searchInput.classList.contains('active')) {
+        searchInput.focus();
+    } else {
+        searchResults.classList.remove('active');
+        searchInput.value = '';
+    }
+});
+
+// Handle Enter key press
+searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+            window.location.href = `search-results.html?q=${encodeURIComponent(query)}`;
+        }
+    }
+});
+
+// Search as you type
+searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const query = e.target.value.trim();
+    
+    if (query.length >= 2) {
+        searchTimeout = setTimeout(() => {
+            searchAll(query);
+        }, 500);
+    } else {
+        searchResults.classList.remove('active');
+    }
+});
+
+// Close search when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-container')) {
+        searchInput.classList.remove('active');
+        searchIcon.classList.remove('active');
+        searchResults.classList.remove('active');
+        searchInput.value = '';
+    }
+});
+
+// Rest of your existing functions
+function searchAll(query) {
+    fetch(`${baseUrl}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}&language=en-US&page=1&include_adult=false`)
+        .then(res => res.json())
+        .then(data => {
+            displaySearchResults(data.results);
+        })
+        .catch(err => {
+            console.error('Search error:', err);
+        });
+}
+
+function displaySearchResults(results) {
+    if (!results || results.length === 0) {
+        searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+        searchResults.classList.add('active');
+        return;
+    }
+
+    searchResults.innerHTML = '';
+    
+    const filteredResults = results.filter(item => 
+        !item.adult && (item.poster_path || item.profile_path)
+    ).slice(0, 8);
+    
+    filteredResults.forEach(item => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'search-result-item';
+        
+        let title, type, mediaType, imagePath, releaseYear;
+        
+        if (item.media_type === 'movie') {
+            title = item.title;
+            type = 'Movie';
+            mediaType = 'movie';
+            imagePath = item.poster_path;
+            releaseYear = item.release_date ? item.release_date.split('-')[0] : '';
+        } else if (item.media_type === 'tv') {
+            title = item.name;
+            type = 'TV Show';
+            mediaType = 'tv';
+            imagePath = item.poster_path;
+            releaseYear = item.first_air_date ? item.first_air_date.split('-')[0] : '';
+        } else if (item.media_type === 'person') {
+            title = item.name;
+            type = 'Person';
+            mediaType = 'person';
+            imagePath = item.profile_path;
+            releaseYear = '';
+        }
+
+        const link = `detail.html?type=${mediaType}&id=${item.id}`;
+
+        resultItem.innerHTML = `
+            <div style="display: flex; width: 100%; cursor: pointer;">
+                <img src="${imagePath ? imgThumb + imagePath : 'image/no-poster.png'}" alt="${title}">
+                <div class="search-result-info">
+                    <h4>${title}</h4>
+                    <p>${releaseYear}</p>
+                    <span class="search-result-type ${mediaType}">${type}</span>
+                </div>
+            </div>
+        `;
+
+        resultItem.addEventListener("click", () => {
+            if (mediaType !== 'person') {
+                window.location.href = link;
+            }
+        });
+
+        searchResults.appendChild(resultItem);
+    });
+
+    searchResults.classList.add('active');
+}
+
+
+const userIcon = document.getElementById("userIcon");
+    const userDashboard = document.getElementById("userDashboard");
+
+    userIcon.addEventListener("click", () => {
+        userDashboard.style.display = userDashboard.style.display === "block" ? "none" : "block";
+    });
+
+    // Optional: Close dashboard when clicking outside
+    window.addEventListener("click", function (e) {
+        if (!userIcon.contains(e.target) && !userDashboard.contains(e.target)) {
+            userDashboard.style.display = "none";
+        }
+    });
+
+function fetchFeaturedTVShows() {
+  const randomPage = Math.floor(Math.random() * 20) + 1;
+
+  fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}&language=en-US&page=${randomPage}`)
+    .then(res => res.json())
+    .then(data => {
+      featuredList = data.results
+  .filter(tv => tv.vote_average >= 7.5 && tv.poster_path && tv.backdrop_path)
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 10);
+
+      renderFeaturedCard();
+      updateFeaturedContent(0);
+    });
+}
+
+function renderFeaturedCard() {
+  const carousel = document.getElementById("featured-carousel");
+  carousel.innerHTML = '';
+
+  featuredList.forEach((tv, index) => {
+    const genre = "TV Show"; // genre_id di TV bisa beda atau tidak tersedia di semua item
+    const rating = tv.vote_average.toFixed(1);
+
+    const card = document.createElement("div");
+    card.className = "featured-card";
+    card.innerHTML = `
+      <img src="https://image.tmdb.org/t/p/w300${tv.poster_path}" alt="${tv.name}">
+      <div class="featured-info-overlay">
+        <h4>${tv.name}</h4>
+        <p>⭐ ${rating} | <span>${genre}</span></p>
+      </div>
+    `;
+
+    card.addEventListener("click", () => {
+    activeCardIndex = index;
+    updateFeaturedContent(index);
+    scrollToCard(index);
+    updateActiveHighlight();
+});
+    card.addEventListener("dblclick", () => {
+      window.location.href = `detail.html?type=tv&id=${tv.id}`;
+    });
+
+    carousel.appendChild(card);
+  });
+}
+
+document.getElementById("featured-carousel").addEventListener("scroll", () => {
+  clearTimeout(window.carouselScrollTimer);
+  window.carouselScrollTimer = setTimeout(() => {
+    const carousel = document.getElementById("featured-carousel");
+    const cards = carousel.querySelectorAll(".featured-card");
+    const carouselRect = carousel.getBoundingClientRect();
+    
+    let closestIndex = 0;
+    let closestDistance = Infinity;
+
+    cards.forEach((card, i) => {
+      const cardRect = card.getBoundingClientRect();
+      const cardCenter = cardRect.left + cardRect.width / 2;
+      const carouselCenter = carouselRect.left + carouselRect.width / 2;
+      const distance = Math.abs(carouselCenter - cardCenter);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = i;
+      }
+    });
+
+    if (closestIndex !== activeCardIndex) {
+      activeCardIndex = closestIndex;
+      updateFeaturedContent(activeCardIndex);
+      updateActiveHighlight();
+    }
+  }, 100); // delay agar tidak terlalu sering dihitung
+});
+
+
+
+function scrollToCard(index) {
+  const carousel = document.getElementById("featured-carousel");
+  const cards = carousel.querySelectorAll(".featured-card");
+  const card = cards[index];
+  if (card) {
+    card.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest"
+    });
+  }
+}
+
+function updateActiveHighlight() {
+  const carousel = document.getElementById("featured-carousel");
+  const cards = carousel.querySelectorAll(".featured-card");
+
+  cards.forEach((c, i) => {
+    if (i === activeCardIndex) {
+      c.classList.add("active");
+    } else {
+      c.classList.remove("active");
+    }
+  });
+}
+
+function updateFeaturedContent(index) {
+  const tv = featuredList[index];
+  const section = document.getElementById("featured-section");
+  const left = document.getElementById("featured-left");
+
+  const year = tv.first_air_date ? tv.first_air_date.split('-')[0] : 'Unknown';
+  const rating = tv.vote_average.toFixed(1);
+  const genres = "TV Show"; // Jika ingin lebih detail, fetch detail genre di API TV detail
+
+  fetch(`https://api.themoviedb.org/3/tv/${tv.id}?api_key=${API_KEY}&language=en-US`)
+    .then(res => res.json())
+    .then(details => {
+      const runtime = details.episode_run_time[0] || 0;
+      const hours = Math.floor(runtime / 60);
+      const minutes = runtime % 60;
+      const duration = runtime ? `${hours}h ${minutes}m` : 'Unknown duration';
+
+      section.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${tv.backdrop_path}')`;
+
+      left.innerHTML = `
+        <h1>${tv.name}</h1>
+        <p style="opacity: 0.8; margin-bottom: 10px;">⭐ ${rating} | ${duration} • ${year} • ${genres}</p>
+        <p>${tv.overview}</p>
+        <div class="buttons">
+          <a href="detail.html?type=tv&id=${tv.id}"><i class='bx bx-play'></i> Play Now</a>
+        </div>
+      `;
+    });
+}
+
+
+
+function loadJustReleaseTV() {
+  const container = document.getElementById('just-release-container');
+  container.innerHTML = '';
+
+  const genreMap = {
+    10759: "Action & Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
+    99: "Documentary", 18: "Drama", 10751: "Family", 10762: "Kids", 9648: "Mystery",
+    10763: "News", 10764: "Reality", 10765: "Sci-Fi & Fantasy", 10766: "Soap",
+    10767: "Talk", 10768: "War & Politics", 37: "Western"
+  };
+
+  fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}&language=en-US&page=1`)
+    .then(res => res.json())
+    .then(data => {
+      const shows = data.results.sort(() => 0.5 - Math.random()).slice(0, 10); // ambil 10 tv show acak
+
+      shows.forEach(show => {
+        if (!show.poster_path) return;
+
+        const genres = show.genre_ids.slice(0, 2)
+          .map(id => genreMap[id] || 'Other')
+          .join(', ');
+
+        const card = document.createElement('div');
+        card.className = 'just-release-card';
+        card.innerHTML = `
+          <img src="https://image.tmdb.org/t/p/w500${show.poster_path}" alt="${show.name}" />
+          <div class="just-release-info">
+              <h3>${show.name}</h3>
+              <p>⭐ ${show.vote_average.toFixed(1)} | <span>${genres}</span></p>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          window.location.href = `detail.html?type=tv&id=${show.id}`;
+        });
+        container.appendChild(card);
+      });
+    })
+    .catch(error => {
+      console.error("Gagal memuat TV show:", error);
+      container.innerHTML = "<p>Gagal memuat Just Release TV Show.</p>";
+    });
+}
+
+
+
+function loadPopularTVShowsMonth() {
+  const container = document.getElementById('popular-week-container');
+  container.innerHTML = '';
+
+  const tvGenreMap = {
+    10759: "Action & Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
+    99: "Documentary", 18: "Drama", 10751: "Family", 10762: "Kids",
+    9648: "Mystery", 10763: "News", 10764: "Reality", 10765: "Sci-Fi & Fantasy",
+    10766: "Soap", 10767: "Talk", 10768: "War & Politics", 37: "Western"
+  };
+
+  fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${API_KEY}`)
+    .then(res => res.json())
+    .then(data => {
+      let rank = 1;
+
+      data.results
+        .filter(tv => tv.vote_average > 7 && tv.poster_path)
+        .slice(0, 10)
+        .forEach(tv => {
+          const genre = tv.genre_ids
+            .map(id => tvGenreMap[id]?.split(/[\s&]+/)[0]) // Ambil satu kata dari genre
+            .filter(Boolean)[0] || 'Other';
+
+          const card = document.createElement('div');
+          card.className = 'popular-week-card';
+          card.innerHTML = `
+            <span class="rank-number">${rank++}</span>
+            <div class="popular-card">
+                <img src="https://image.tmdb.org/t/p/w300${tv.poster_path}" alt="${tv.name}">
+                <div class="popular-week-info">
+                    <h3>${tv.name}</h3>
+                    <p class="genres">${genre}</p>
+                    <p>⭐ ${tv.vote_average.toFixed(1)} | TV Show</p>
+                </div>
+            </div>
+          `;
+
+          card.addEventListener("click", () => {
+            window.location.href = `detail.html?type=tv&id=${tv.id}`;
+          });
+
+          container.appendChild(card);
+        });
+    });
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadJustReleaseTV();
+  loadPopularTVShowsMonth()
+});
+
+let movieGenres = {};
+let tvGenres = {};
+
+async function fetchGenres() {
+  const [movieRes, tvRes] = await Promise.all([
+    fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=en-US`),
+    fetch(`https://api.themoviedb.org/3/genre/tv/list?api_key=${API_KEY}&language=en-US`)
+  ]);
+
+  const movieData = await movieRes.json();
+  const tvData = await tvRes.json();
+
+  movieGenres = Object.fromEntries(movieData.genres.map(g => [g.id, g.name]));
+  tvGenres = Object.fromEntries(tvData.genres.map(g => [g.id, g.name]));
+}
+
+function fetchNowPlayingMovies() {
+  const randomPage = Math.floor(Math.random() * 5) + 1;
+   fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=14,28&page=${randomPage}`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("popular-movie-container");
+      container.innerHTML = '';
+
+      data.results
+        .filter(movie => movie.poster_path && movie.vote_average > 0)
+        .forEach(movie => {
+          const rating = movie.vote_average.toFixed(1);
+          const genreNames = movie.genre_ids
+            .map(id => movieGenres[id])
+            .filter(Boolean)
+            .slice(0, 2)
+            .join(', ');
+
+          const item = document.createElement("div");
+          item.className = "popular-card-item";
+          item.innerHTML = `
+            <img src="https://image.tmdb.org/t/p/w300${movie.poster_path}" alt="${movie.title}">
+            <div class="popular-card-info">
+              <h4>${movie.title}</h4>
+              <p>⭐ ${rating} &nbsp; | &nbsp; ${genreNames}</p>
+            </div>
+          `;
+          item.addEventListener("click", () => {
+            window.location.href = `detail.html?type=movie&id=${movie.id}`;
+          });
+          container.appendChild(item);
+        });
+    });
+}
+
+
+function fetchPopularTVShows() {
+  const randomPage = Math.floor(Math.random() * 50) + 1;
+
+  fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&language=en-US&with_genres=16,10762&page=${randomPage}`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("popular-tv-container");
+      container.innerHTML = '';
+      const randomShows = data.results.sort(() => Math.random() - 0.5);
+
+      randomShows.forEach(show => {
+        if (show.poster_path && show.name && show.vote_average > 0) {
+          const rating = show.vote_average.toFixed(1);
+          const genreNames = show.genre_ids
+            .map(id => tvGenres[id])
+            .filter(Boolean)
+            .slice(0, 2)
+            .join(', ');
+
+          const item = document.createElement("div");
+          item.className = "popular-card-item";
+          item.innerHTML = `
+            <img src="https://image.tmdb.org/t/p/w300${show.poster_path}" alt="${show.name}">
+            <div class="popular-card-info">
+              <h4>${show.name}</h4>
+              <p>⭐ ${rating} &nbsp; | &nbsp; ${genreNames}</p>
+            </div>
+          `;
+          item.addEventListener("click", () => {
+            window.location.href = `detail.html?type=tv&id=${show.id}`;
+          });
+          container.appendChild(item);
+        }
+      });
+    });
+}
+
+// Load genre mapping dulu, lalu fetch data lainnya
+fetchGenres().then(() => {
+  fetchNowPlayingMovies();
+  fetchPopularTVShows();
+});
+
+
+
+
+// Upcoming Movies
+function fetchUpcomingTVShows() {
+  const API_KEY = 'c4d40593b012ddf8fd9bbafe6c7b3a63'; // Ganti dengan API key kamu
+
+  const tvGenres = {
+    10759: "Action & Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
+    99: "Documentary", 18: "Drama", 10751: "Family", 10762: "Kids", 9648: "Mystery",
+    10763: "News", 10764: "Reality", 10765: "Sci-Fi & Fantasy", 10766: "Soap",
+    10767: "Talk", 10768: "War & Politics", 37: "Western"
+  };
+
+  const container = document.getElementById("upcoming-tv-container");
+  container.innerHTML = '';
+
+  const today = new Date();
+  const nextMonth = today.getMonth() + 1;
+  const year = today.getFullYear();
+
+  const startDate = new Date(year, nextMonth, 1);
+  const endDate = new Date(year, nextMonth + 1, 0);
+
+  const startDateStr = startDate.toISOString().split('T')[0];
+  const endDateStr = endDate.toISOString().split('T')[0];
+
+  const pagesToFetch = [1, 2, 3];
+
+  Promise.all(
+    pagesToFetch.map(page =>
+      fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&language=en-US&sort_by=first_air_date.asc&first_air_date.gte=${startDateStr}&first_air_date.lte=${endDateStr}&page=${page}`)
+        .then(res => res.json())
+    )
+  ).then(responses => {
+    const allShows = responses.flatMap(res => res.results);
+
+    if (allShows.length === 0) {
+      container.innerHTML = "<p>Tidak ada TV show coming soon bulan depan.</p>";
+      return;
+    }
+
+    allShows.forEach(show => {
+      if (!show.poster_path || !show.first_air_date) return;
+
+      const rating = show.vote_average?.toFixed(1) || 'N/A';
+      const genreNames = show.genre_ids
+        .map(id => tvGenres[id])
+        .filter(Boolean)
+        .slice(0, 2)
+        .join(', ');
+
+      const item = document.createElement("div");
+      item.className = "just-release-card";
+      item.innerHTML = `
+        <img src="https://image.tmdb.org/t/p/w300${show.poster_path}" alt="${show.name}">
+        <div class="just-release-info">
+          <h3>${show.name}</h3>
+          <p>
+            <span>⭐ ${rating}</span>
+            &nbsp;&bull;&nbsp;
+            <span>${genreNames}</span>
+          </p>
+          <span>📅 ${show.first_air_date}</span>
+        </div>
+      `;
+
+      item.addEventListener("click", () => {
+        window.location.href = `detail.html?type=tv&id=${show.id}`;
+      });
+
+      container.appendChild(item);
+    });
+  }).catch(error => {
+    console.error("Gagal memuat data upcoming TV shows:", error);
+    container.innerHTML = "<p>Gagal memuat TV show.</p>";
+  });
+}
+
+
+function fetchTopRatedTVShows() {
+  const tvGenres = {
+    10759: "Action & Adventure",
+    16: "Animation",
+    35: "Comedy",
+    80: "Crime",
+    99: "Documentary",
+    18: "Drama",
+    10751: "Family",
+    10762: "Kids",
+    9648: "Mystery",
+    10763: "News",
+    10764: "Reality",
+    10765: "Sci-Fi & Fantasy",
+    10766: "Soap",
+    10767: "Talk",
+    10768: "War & Politics",
+    37: "Western"
+  };
+
+  fetch(`https://api.themoviedb.org/3/tv/top_rated?api_key=${API_KEY}&language=en-US&page=1`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("top-rated-tv-container");
+      container.innerHTML = '';
+
+      data.results
+        .filter(tv => tv.poster_path && tv.vote_average >= 6)
+        .forEach(tv => {
+          const rating = tv.vote_average.toFixed(1);
+         const genreNames = tv.genre_ids
+  .filter(id => tvGenres[id])
+  .slice(0, 2)
+  .map(id => tvGenres[id].split(/[\s&]+/)[0])
+  .join(', ');
+
+          const item = document.createElement("div");
+          item.className = "just-release-card";
+          item.innerHTML = `
+            <img src="https://image.tmdb.org/t/p/w300${tv.poster_path}" alt="${tv.name}">
+            <div class="just-release-info">
+              <h3>${tv.name}</h3>
+              <p>
+                <span>⭐ ${rating}</span>
+                &nbsp;&bull;&nbsp;
+                <span>${genreNames}</span>
+              </p>
+            </div>
+          `;
+          item.addEventListener("click", () => {
+            window.location.href = `detail.html?type=tv&id=${tv.id}`;
+          });
+
+          container.appendChild(item);
+        });
+    });
+}
+
+
+fetchUpcomingTVShows();
+fetchTopRatedTVShows();
+fetchFeaturedTVShows();
+
+function loadDramaTVSection() {
+  const container = document.getElementById('drama-container');
+  container.innerHTML = '';
+
+  const genreMap = {
+    10759: 'Action & Adventure', 16: 'Animation', 35: 'Comedy',
+    80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+    10762: 'Kids', 9648: 'Mystery', 10763: 'News', 10764: 'Reality',
+    10765: 'Sci-Fi & Fantasy', 10766: 'Soap', 10767: 'Talk',
+    10768: 'War & Politics', 37: 'Western'
+  };
+
+  fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_genres=18&vote_average.gte=7&language=en-US&page=1`)
+    .then(res => res.json())
+    .then(data => {
+      // Filter + Acak
+      const filtered = data.results.filter(show => show.poster_path && show.vote_average >= 7);
+      const randomShows = filtered.sort(() => Math.random() - 0.5).slice(0, 20); // ambil 20 acak
+
+      randomShows.forEach(show => {
+        const genres = show.genre_ids.slice(0, 1)
+          .map(id => genreMap[id] || 'Other')
+          .join(', ');
+
+        const card = document.createElement('div');
+        card.className = 'just-release-card';
+        card.innerHTML = `
+          <img src="https://image.tmdb.org/t/p/w500${show.poster_path}" alt="${show.name}" />
+          <div class="just-release-info">
+              <h3>${show.name}</h3>
+              <p>⭐ ${show.vote_average.toFixed(1)} | <span>${genres}</span></p>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          window.location.href = `detail.html?type=tv&id=${show.id}`;
+        });
+        container.appendChild(card);
+      });
+    });
+}
+
+loadDramaTVSection();
+
+function loadComedyTVSection() {
+  const container = document.getElementById('comedy-container');
+  container.innerHTML = '';
+
+  const genreMap = {
+    10759: 'Action & Adventure', 16: 'Animation', 35: 'Comedy',
+    80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+    10762: 'Kids', 9648: 'Mystery', 10763: 'News', 10764: 'Reality',
+    10765: 'Sci-Fi & Fantasy', 10766: 'Soap', 10767: 'Talk',
+    10768: 'War & Politics', 37: 'Western'
+  };
+
+  fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_genres=35&vote_average.gte=7&language=en-US&page=1`)
+    .then(res => res.json())
+    .then(data => {
+      const filtered = data.results
+        .filter(show =>
+          show.poster_path &&
+          show.vote_average >= 7 &&
+          !show.genre_ids.includes(16) // exclude Animation
+        );
+
+      const randomShows = filtered.sort(() => Math.random() - 0.5).slice(0, 20);
+
+      randomShows.forEach(show => {
+        const genres = show.genre_ids.slice(0, 2)
+          .map(id => genreMap[id] || 'Other')
+          .join(', ');
+
+        const card = document.createElement('div');
+        card.className = 'just-release-card';
+        card.innerHTML = `
+          <img src="https://image.tmdb.org/t/p/w500${show.poster_path}" alt="${show.name}" />
+          <div class="just-release-info">
+              <h3>${show.name}</h3>
+              <p>⭐ ${show.vote_average.toFixed(1)} | <span>${genres}</span></p>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          window.location.href = `detail.html?type=tv&id=${show.id}`;
+        });
+        container.appendChild(card);
+      });
+    });
+}
+
+
+loadComedyTVSection();
+
+function loadAnimationTVSection() {
+  const container = document.getElementById('animation-container');
+  container.innerHTML = '';
+
+  const genreMap = {
+    10759: 'Action & Adventure', 16: 'Animation', 35: 'Comedy',
+    80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+    10762: 'Kids', 9648: 'Mystery', 10763: 'News', 10764: 'Reality',
+    10765: 'Sci-Fi & Fantasy', 10766: 'Soap', 10767: 'Talk',
+    10768: 'War & Politics', 37: 'Western'
+  };
+
+  fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_genres=16&vote_average.gte=7&language=en-US&page=1`)
+    .then(res => res.json())
+    .then(data => {
+      const filtered = data.results.filter(show =>
+        show.poster_path &&
+        show.vote_average >= 7 &&
+        !show.origin_country.includes("JP") // exclude anime
+      );
+
+      const randomShows = filtered.sort(() => Math.random() - 0.5).slice(0, 20);
+
+      randomShows.forEach(show => {
+        const genres = show.genre_ids.slice(0, 2)
+          .map(id => genreMap[id] || 'Other')
+          .join(', ');
+
+        const card = document.createElement('div');
+        card.className = 'just-release-card';
+        card.innerHTML = `
+          <img src="https://image.tmdb.org/t/p/w500${show.poster_path}" alt="${show.name}" />
+          <div class="just-release-info">
+              <h3>${show.name}</h3>
+              <p>⭐ ${show.vote_average.toFixed(1)} | <span>${genres}</span></p>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          window.location.href = `detail.html?type=tv&id=${show.id}`;
+        });
+        container.appendChild(card);
+      });
+    });
+}
+
+loadAnimationTVSection();
+
+function loadAnimeTVSection() {
+  const container = document.getElementById('anime-container');
+  container.innerHTML = '';
+
+  const genreMap = {
+    10759: 'Action & Adventure', 16: 'Animation', 35: 'Comedy',
+    80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+    10762: 'Kids', 9648: 'Mystery', 10763: 'News', 10764: 'Reality',
+    10765: 'Sci-Fi & Fantasy', 10766: 'Soap', 10767: 'Talk',
+    10768: 'War & Politics', 37: 'Western', 10749: 'Romance' // Menambahkan Romance untuk filter
+  };
+
+  const totalPages = 10; // Ambil 10 halaman
+  let allAnime = [];
+
+  const fetchPage = (page) => {
+    return fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_genres=16&vote_average.gte=7&language=en-US&page=${page}`)
+      .then(res => res.json())
+      .then(data => {
+        return data.results.filter(show =>
+          show.poster_path &&
+          show.vote_average >= 7 &&
+          show.origin_country.includes("JP") && // hanya anime dari Jepang
+          !show.genre_ids.includes(10749) && // hindari Romance
+          !show.genre_ids.includes(35) // hindari Comedy
+        );
+      });
+  };
+
+  // Ambil data dari beberapa halaman
+  Promise.all(Array.from({ length: totalPages }, (_, i) => fetchPage(i + 1)))
+    .then(pagesData => {
+      allAnime = pagesData.flat(); // Gabungkan hasil dari semua halaman
+      const randomShows = allAnime.sort(() => Math.random() - 0.5).slice(0, 40); // ambil 40 acak
+
+      randomShows.forEach(show => {
+        // Pilih genre yang lebih spesifik, hindari Animation terlalu sering
+        const genreIds = show.genre_ids.filter(id => id !== 16); // Filter genre Animation
+        const genre = genreIds.length > 0 ? genreMap[genreIds[0]] || 'Other' : 'Other'; // Ambil genre pertama yang bukan Animation
+
+        const card = document.createElement('div');
+        card.className = 'just-release-card';
+        card.innerHTML = `
+          <img src="https://image.tmdb.org/t/p/w500${show.poster_path}" alt="${show.name}" />
+          <div class="just-release-info">
+              <h3>${show.name}</h3>
+              <p>⭐ ${show.vote_average.toFixed(1)} | <span>${genre}</span></p>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          window.location.href = `detail.html?type=tv&id=${show.id}`;
+        });
+        container.appendChild(card);
+      });
+    });
+}
+
+
+loadAnimeTVSection();
+
+
+</script>
+
+<script>
+const TMDB_API_KEY = 'c4d40593b012ddf8fd9bbafe6c7b3a63'; 
+const filmIDs = [1241982 , 976573, 519182 ,  400160 , 330457];
+const swiperWrapper = document.getElementById('swiper-content');
+
+// Fetch detail film dari TMDB
+async function fetchFilmDetails(id) {
+  const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_API_KEY}&language=en-US`);
+  return await response.json();
+}
+
+// Load data film dan render slide
+async function loadSwiperFilms() {
+  for (const id of filmIDs) {
+    try {
+      const film = await fetchFilmDetails(id);
+      const genres = film.genres.map(g => g.name).join(' | ');
+      const runtime = film.runtime
+        ? `${Math.floor(film.runtime / 60)}h ${film.runtime % 60}m`
+        : 'N/A';
+
+      const slide = document.createElement('div');
+      slide.className = 'swiper-slide';
+      slide.style.backgroundImage = `url(https://image.tmdb.org/t/p/original${film.backdrop_path})`;
+
+      slide.innerHTML = `
+        <div class="container">
+          <h1>${film.title}</h1>
+          <span class="info">${runtime} | ${film.release_date?.slice(0, 4) || 'Unknown'} | ${genres}</span>
+          <p>${film.overview}</p>
+          <div class="buttons">
+            <button class="play"><i class='bx bx-play'></i> Play Now</button>
+            <button class="save"><i class='bx bx-bookmark'></i> Add Watchlist</button>
+          </div>
+        </div>
+      `;
+
+      // Tombol play
+      slide.querySelector('.play').addEventListener('click', () => {
+        window.location.href = `detail.html?type=movie&id=${film.id}`;
+      });
+
+      // Tombol save
+      slide.querySelector('.save').addEventListener('click', () => {
+        const watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
+
+        const exists = watchlist.some(item => item.id === film.id && item.media_type === 'movie');
+        if (exists) {
+          alert("Sudah ada di watchlist kamu.");
+          return;
+        }
+
+        const newItem = {
+          id: film.id,
+          title: film.title,
+          poster_path: film.poster_path,
+          vote_average: film.vote_average,
+          release_date: film.release_date,
+          media_type: 'movie'
+        };
+
+        watchlist.push(newItem);
+        localStorage.setItem("watchlist", JSON.stringify(watchlist));
+        alert("Berhasil ditambahkan ke Watchlist!");
+      });
+
+      swiperWrapper.appendChild(slide);
+    } catch (err) {
+      console.error(`Gagal memuat film ID: ${id}`, err);
+    }
+  }
+}
+
+// Inisialisasi Swiper setelah halaman siap
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadSwiperFilms(); // Tunggu hingga semua film selesai ditambahkan
+
+  const swiper = new Swiper('.mySectionSwiper', {
+  loop: true,
+  grabCursor: true,
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  }
+});
+
+
+  swiper.update(); // Update Swiper setelah slide dinamis ditambahkan
+});
+
+// Scroll fallback manual (jika dibutuhkan di tempat lain)
+function scrollSlider(containerId, direction) {
+  const container = document.getElementById(containerId);
+  const scrollAmount = 900;
+  container.scrollBy({
+    left: direction === 'left' ? -scrollAmount : scrollAmount,
+    behavior: 'smooth'
+  });
+}
+
+</script>
+<script>
+  const menuToggle = document.getElementById("menuToggle");
+  const navList = document.querySelector("nav ul");
+
+  menuToggle.addEventListener("click", () => {
+    navList.classList.toggle("show");
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script type="module" src="../js/firebase-init.js"></script>
+  <script type="module">
+  import { auth, db } from '../js/firebase-init.js';
+  import { signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+ 
+
+
+  class User {
+    constructor(email, password) {
+      this.email = email;
+      this.password = password;
+    }
+
+    async existsInFirestore() {
+      const docRef = doc(db, "users", this.email);
+      const docSnap = await getDoc(docRef);
+      return docSnap.exists() ? docSnap.data() : null;
+    }
+
+    async login() {
+      return await signInWithEmailAndPassword(auth, this.email, this.password);
+    }
+
+    static async sendReset(email) {
+      await sendPasswordResetEmail(auth, email);
+    }
+  }
+
+  const loginBtn = document.getElementById("login-btn");
+  const forgotPasswordLink = document.getElementById("forgot-password");
+  const rememberMeCheckbox = document.getElementById("remember-me");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const togglePassword = document.getElementById("toggle-password");
+  const registerButton = document.getElementById("register-button");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener('scroll', function () {
+      const header = document.querySelector('.header');
+      if (window.scrollY > 10) {
+        header.style.background = 'rgba(20, 20, 31, 0.7)';
+        header.style.backdropFilter = 'blur(8px)';
+        header.style.webkitBackdropFilter = 'blur(8px)';
+        header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+      } else {
+        header.style.background = 'transparent';
+        header.style.backdropFilter = 'none';
+        header.style.webkitBackdropFilter = 'none';
+        header.style.boxShadow = 'none';
+      }
+    });
+
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      emailInput.value = savedEmail;
+      rememberMeCheckbox.checked = true;
+    }
+    forgotPasswordLink.style.display = "none";
+  });
+
+  togglePassword.addEventListener("click", () => {
+    const type = passwordInput.type === "password" ? "text" : "password";
+    passwordInput.type = type;
+    togglePassword.classList.toggle("bx-hide");
+    togglePassword.classList.toggle("bx-show");
+  });
+
+  loginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    forgotPasswordLink.style.display = "none";
+
+    if (!email || !password) {
+      alert("Email dan password wajib diisi.");
+      return;
+    }
+
+    if (rememberMeCheckbox.checked) {
+      localStorage.setItem("rememberedEmail", email);
+    } else {
+      localStorage.removeItem("rememberedEmail");
+    }
+
+    const user = new User(email, password);
+
+    try {
+      const userData = await user.existsInFirestore();
+      if (!userData) {
+        alert("Email belum terdaftar. Silakan daftar terlebih dahulu.");
+        window.location.href = "register.html";
+        return;
+      }
+
+      await user.login();
+
+      if (!userData.isPaid) {
+        alert("Akun belum berbayar. Silakan lanjut ke pembayaran.");
+        window.location.href = `payment.html?plan=${userData.plan}&price=${userData.price}`;
+        return;
+      }
+
+      localStorage.setItem("loggedInUser", JSON.stringify(userData));
+      window.location.href = "index.html";
+
+    } catch (err) {
+      console.error(err);
+      if (err.code === "auth/user-not-found") {
+        alert("Akun tidak ditemukan. Silakan daftar terlebih dahulu.");
+        window.location.href = "register.html";
+      } else if (err.code === "auth/wrong-password" || err.code === "auth/invalid-login-credentials") {
+        alert("Password salah. Coba lagi.");
+        forgotPasswordLink.style.display = "block";
+      } else if (err.code === "auth/too-many-requests") {
+        alert("Terlalu banyak percobaan login. Coba beberapa saat lagi.");
+      } else {
+        alert("Login gagal: " + err.message);
+      }
+    }
+  });
+
+  forgotPasswordLink.addEventListener("click", async () => {
+    const email = emailInput.value.trim();
+    if (!email) {
+      alert("Masukkan email terlebih dahulu untuk reset password.");
+      return;
+    }
+    try {
+      await User.sendReset(email);
+      alert("Email reset password telah dikirim ke " + email);
+    } catch (err) {
+      alert("Gagal mengirim reset password: " + err.message);
+    }
+  });
+
+  registerButton.addEventListener("click", () => {
+    window.location.href = "register.html";
+  });
+</script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .header {
+      padding: 20px 4%;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+      background: transparent;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+    
+    .custom-logo {
+      height: 45px;
+      width: auto;
+    }
+    
+    #register-button {
+      background-color: #EFB036;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-weight: bold;
+    }
+    
+    #register-button:hover {
+      background-color: #ffc859;
+    }
+    
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #141414;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 100px 20px 0;
+    }
+    
+    .login-container {
+      background: rgba(11, 11, 14, 0.8);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(239, 176, 54, 0.1);
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid rgba(239, 176, 54, 0.15);
+      transform: translateY(0);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .login-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    }
+    
+    .login-container h1 {
+      text-align: center;
+      margin-bottom: 32px;
+      font-size: 32px;
+      font-weight: 600;
+      color: #e2e2e2;
+      letter-spacing: 1px;
+      position: relative;
+      padding-bottom: 12px;
+    }
+    
+    .login-container h1::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #EFB036, #ffc859);
+      border-radius: 3px;
+    }
+    
+    .input-group {
+      position: relative;
+      margin-bottom: 24px;
+    }
+    
+    .input-group i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.6);
+      transition: color 0.3s;
+    }
+    
+    .input-group i.bx-hide,
+    .input-group i.bx-show {
+      left: auto;
+      right: 16px;
+      top: 50%; /* Mengubah posisi vertikal ke tengah */
+      transform: translateY(-50%); /* Memastikan benar-benar di tengah vertikal */
+      cursor: pointer;
+      font-size: 20px; /* Memastikan ukuran ikon tetap konsisten */
+    }
+    
+    .input-group input:focus + i {
+      color: #EFB036;
+    }
+    
+    input[type="email"], input[type="password"], input[type="text"] {
+      width: 100%;
+      padding: 16px 16px 16px 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #EFB036;
+      background-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 2px rgba(239, 176, 54, 0.2);
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 15px;
+    }
+    
+    .remember-me input {
+      margin-right: 10px;
+      accent-color: #EFB036;
+    }
+    
+    button#login-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #EFB036, #ffc859);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(239, 176, 54, 0.3);
+    }
+    
+    button#login-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.7s;
+    }
+    
+    button#login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 20px rgba(239, 176, 54, 0.4);
+    }
+    
+    button#login-btn:hover::before {
+      left: 100%;
+    }
+    
+    button#login-btn:active {
+      transform: translateY(1px);
+    }
+    
+    #forgot-password {
+      margin-top: 16px;
+      text-align: center;
+      color: #EFB036;
+      cursor: pointer;
+      font-size: 15px;
+      transition: color 0.3s;
+    }
+    
+    #forgot-password:hover {
+      text-decoration: underline;
+    }
+    
+    .register-link {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .register-link a {
+      color: #EFB036;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    .main-content {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      padding: 40px 0;
+    }
+    
+    .bottom-line {
+      height: 2px;
+      width: 100%;
+      background: linear-gradient(90deg, 
+                  rgba(239,176,54,0) 0%, 
+                  rgba(239,176,54,0.6) 50%, 
+                  rgba(239,176,54,0) 100%);
+      margin: 40px 0 0;
+    }
+
+    .main-footer {
+      background-color: #141414;
+      color: white;
+      padding: 40px 60px;
+      font-family: sans-serif;
+      width: 100%;
+    }
+
+    .footer-right a:hover {
+      text-decoration: underline;
+      color: #EFB036;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding-bottom: 20px;
+    }
+
+    .footer-left {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .footer-desc {
+      font-size: 25px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: white;
+      max-width: 340px;
+      word-break: break-word;
+    }
+
+    .footer-right {
+      flex: 1;
+      min-width: 250px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 15px;
+    }
+
+    .footer-nav a {
+      color: white;
+      margin: 0 5px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .footer-socials {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+    }
+
+    .footer-socials a {
+      color: #ffffff;
+      font-size: 20px;
+      transition: all 0.3s ease;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer-socials a:hover {
+      background-color: #EFB036;
+      transform: translateY(-3px);
+      color: #ffffff;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 12px;
+      margin-top: 20px;
+      color: white;
+    }
+
+    .footer-links a {
+      margin-right: 20px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+      color: #EFB036;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 768px) {
+      .footer-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .footer-right {
+        align-items: flex-start;
+      }
+
+      .footer-nav {
+        margin-top: 10px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .main-footer {
+        padding: 30px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-desc {
+        font-size: 16px;
+      }
+
+      .footer-nav a {
+        font-size: 13px;
+      }
+
+      .footer-socials a {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="unpaid.html" class="logo-link">
+  <div class="logo-container">
+    <img src="../assets/image/logo.png" alt="Your Logo" class="custom-logo">
+  </div>
+</a>
+
+    <button id="register-button">Register</button>
+  </header>
+  
+  <div class="main-content">
+    <div class="login-container">
+      <h1>Login</h1>
+      <div class="input-group">
+        <input type="email" id="email" placeholder="Email" />
+        <i class='bx bx-envelope'></i>
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" placeholder="Password" />
+        <i class='bx bx-lock-alt'></i>
+        <i class='bx bx-hide' id="toggle-password"></i>
+      </div>
+      <div class="remember-me">
+        <input type="checkbox" id="remember-me">
+        <label for="remember-me">Ingat saya</label>
+      </div>
+      <button id="login-btn">Login</button>
+      <p id="forgot-password">Lupa password?</p>
+      <div class="register-link">
+        Belum punya akun? <a href="register.html">Daftar di sini</a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bottom-line"></div>
+  
+  <footer class="main-footer">
+    <div class="footer-top">
+      <div class="footer-left">
+        <p class="footer-desc">
+          Our platform is very affordable & features<br>
+          best updated movies all around the world.
+        </p>
+      </div>
+      <div class="footer-right">
+        <nav class="footer-nav">
+          
+        </nav>
+        <div class="footer-socials">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-links">
+        <a href="#">Privacy policy</a>
+        <a href="#">Term of service</a>
+        <a href="#">FAQ</a>
+        <a href="#">Help Center</a>
+      </div>
+      <span class="footer-copy">© 2025</span>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Help Center for Watch It All - find answers to common questions." />
+  <title>Help Center | Watch It All</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+  <div id="progress-bar"></div>
+
+  <header>
+    <div class="logo">
+      <img src="../assets/image/logo.png" alt="Watch It All Logo" />
+    </div>
+  </header>
+
+  <main>
+    <section class="hero fade-in">
+      <h1>Help Center</h1>
+      <p>Find answers to your questions and get support</p>
+    </section>
+
+    <h2 class="fade-in"><i class='bx bx-user-circle'></i> Account & Subscription</h2>
+    <ul class="fade-in">
+      <li><strong>How do I create an account?</strong><br>Click “Sign Up”, fill in your details, and follow the instructions.</li>
+      <li><strong>How can I cancel my subscription?</strong><br>Go to “Account Settings” and choose “Cancel Subscription”.</li>
+      <li><strong>Can I change my plan?</strong><br>Yes! Go to “Billing” and select a new plan.</li>
+    </ul>
+
+    <h2 class="fade-in"><i class='bx bx-play-circle'></i> Streaming & Playback</h2>
+    <ul class="fade-in">
+      <li><strong>Why is my video buffering?</strong><br>Check your internet connection or lower the video quality in settings.</li>
+      <li><strong>Which devices are supported?</strong><br>You can watch on mobile, tablet, desktop, and smart TVs.</li>
+      <li><strong>Can I download videos?</strong><br>Yes, downloading is available for selected content.</li>
+    </ul>
+
+    <h2 class="fade-in"><i class='bx bx-lock'></i> Security & Privacy</h2>
+    <ul class="fade-in">
+      <li><strong>Is my personal data safe?</strong><br>We use encrypted protocols to keep your data secure.</li>
+      <li><strong>How do I reset my password?</strong><br>Click “Forgot Password” on the login page and follow the steps.</li>
+    </ul>
+
+    <h2 class="fade-in"><i class='bx bx-phone'></i> Need More Help?</h2>
+    <section class="help-section fade-in">
+      <div class="help-left">
+        <p>We're here to help you with any problems you may be having with our product.</p>
+        <div class="poster-single">
+          <img src="../assets/image/Sub_Container.png" alt="Movie Posters">
+        </div>
+      </div>
+      <div class="help-right">
+        <form class="contact-form" >
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Enter your Name" required>
+
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Enter your Email" required>
+
+          <label for="message">Message</label>
+          <textarea id="message" rows="5" placeholder="Enter your Message" required></textarea>
+
+          <div class="form-check">
+            <input type="checkbox" id="agree" required>
+            <label for="agree">I agree with Terms of Use and Privacy Policy</label>
+          </div>
+
+          <button type="submit" class="send-btn">Send Message</button>
+        </form>
+      </div>
+    </section>
+
+    <button class="btn-back" onclick="window.history.back()" aria-label="Go back to the previous page">Back</button>
+  </main>
+
+<!-- FOOTER -->
+<div class="bottom-line"></div>
+   <footer class="main-footer">
+  <div class="footer-top">
+    <div class="footer-left">
+      <p class="footer-desc">
+        Our platform is very affordable & features<br>
+        best updated movies all around the world.
+      </p>
+    </div>
+    <div class="footer-right">
+      <div class="footer-socials">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-google"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-links">
+      <a href="privacy.html">Privacy policy</a>
+      <a href="terms-of-use.html">Term of service</a>
+      <a href="FAQ.html">FAQ</a>
+      <a href="help-center.html">Help Center</a>
+
+    </div>
+    
+    <span class="footer-copy">© 2025</span>
+  </div>
+</footer>
+
+<!-- CSS -->
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Judson:ital@1&family=Manrope:wght@200..800&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Manrope", sans-serif;
+    }
+
+    body {
+      background: black;
+      color: white;
+      padding-top: 70px;
+      overflow-x: hidden;
+    }
+
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: #EFB036;
+      width: 0%;
+      z-index: 999;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      z-index: 10;
+      padding: 0 20px;
+    }
+
+    .logo img {
+      width: 120px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: auto;
+      padding: 40px 20px 100px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      color: #EFB036;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #ccc;
+    }
+
+    h2 {
+      color: #EFB036;
+      margin: 30px 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    ul {
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .help-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      background: #141414;
+      padding: 30px;
+      border-radius: 10px;
+      margin-top: 40px;
+    }
+
+    .help-left {
+      flex: 1 1 300px;
+    }
+
+    .poster-single img {
+        padding-top: 10px;
+        border-radius: 20px;
+        width: 100%;
+    }
+
+    .help-right {
+      flex: 1 1 300px;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .contact-form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      background-color: #121212;
+      color: white;
+    }
+
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+      color: #888;
+    }
+
+    .form-check {
+      display: flex;
+      align-items: center;
+      margin-left: -10rem;
+      margin-bottom: 15px;
+    }
+
+    .form-check input {
+      margin-right: 10px;
+    }
+
+    .send-btn {
+      background-color: #EFB036;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .send-btn:hover {
+      background-color: #EFB036;
+    }
+
+    .btn-back {
+      position: fixed;
+      bottom: 70px;
+      right: 50px;
+      background-color: #EFB036;
+      color: white;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 50px;
+      box-shadow: 0 0 10px rgba(239, 176, 54, 0.3);
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 99;
+    }
+
+    .btn-back:hover {
+      background-color: #ffbb33;
+    }
+
+    .bottom-line {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, 
+              rgba(239,176,54,0) 0%, 
+              rgba(239,176,54,0.6) 50%, 
+              rgba(239,176,54,0) 100%);
+  margin: 40px 0 0;
+}
+
+.main-footer {
+  background-color: #0f0f0f;
+  color: white;
+  padding: 50px 5% 30px;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding-bottom: 30px;
+}
+
+.footer-left {
+  flex: 1;
+  min-width: 250px;
+}
+
+.footer-desc {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: white;
+  max-width: 340px; /* batasi lebar supaya teks turun ke baris berikutnya */
+  word-break: break-word;
+}
+
+.footer-right {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 25px;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-end;
+}
+
+.footer-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  padding: 5px 0;
+  position: relative;
+}
+
+.footer-nav a:hover {
+  color: #EFB036;
+}
+
+.footer-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #EFB036;
+  transition: width 0.3s ease;
+}
+
+.footer-nav a:hover::after {
+  width: 100%;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 15px;
+}
+
+.footer-socials a {
+  color: #ffffff;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-socials a:hover {
+  background-color: #EFB036;
+  transform: translateY(-3px) scale(1.1);
+  color: #000;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 30px;
+ 
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #EFB036;
+  text-decoration: underline;
+}
+
+.footer-copy {
+  font-weight: 300;
+}
+
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease-in-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .btn-back {
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .footer-lang select {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.7rem;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+      }
+
+      p, li {
+        font-size: 0.95rem;
+      }
+
+      .btn-back {
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+    }
+  </style>
+
+  <script>
+    // Scroll progress bar
+    window.onscroll = function () {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById("progress-bar").style.width = scrolled + "%";
+    };
+
+    // Fade-in animation
+    document.addEventListener("DOMContentLoaded", function () {
+      const faders = document.querySelectorAll('.fade-in');
+      const appearOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+      };
+
+      const appearOnScroll = new IntersectionObserver(function (entries, observer) {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        });
+      }, appearOptions);
+
+      faders.forEach(fader => appearOnScroll.observe(fader));
+    });
+  </script>
+</body>
+</html>

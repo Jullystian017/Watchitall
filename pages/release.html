@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WATCHITALL - Upcoming Releases</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module">
+  import { auth, db } from '../js/firebase-init.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+  const docSnap = await getDoc(doc(db, "users", user.email));
+  if (!docSnap.exists() || !docSnap.data().isPaid) {
+    window.location.href = 'payment.html';
+  }
+  
+});
+
+</script>
+    <style>
+        :root {
+            --primary-color: #fafcfd;
+            --accent-color: #EFB036;
+            --dark-bg: #0a1014;
+            --card-bg: #ffffff;
+            --text-primary: #333;
+            --text-secondary: #0c0c0c;
+            --text-light: #0f0f0f;
+            --radius: 10px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            list-style: none;
+            text-decoration: none;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+        }
+
+       header{
+    width: 90%;
+    height: 70%;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-radius: 0 0 10px 10px;
+    margin: 0 auto;
+    backdrop-filter: blur(2px); 
+    position: relative;
+    z-index: 10;
+    animation: fadeIn 0.8s ease-in-out;width: 100%;
+  height: 90px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 30px;
+  border-radius: 0 0 10px 10px;
+  margin: 0 auto;
+  backdrop-filter: blur(4px);
+  position: absolute;
+  top: 0;
+  z-index: 10;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.Logo {
+  padding-top: 8px;
+  width: 150px;
+  height: auto;
+  padding-bottom: -8px;
+}
+
+
+
+nav ul{
+    display: flex;
+    background: transparent;
+    position: relative;
+}
+
+nav ul li a{
+    color: #BFBFBF;
+    display: block;
+    margin: 5px 8px;
+    padding: 12px 18px;
+    transition: 0.2s;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+nav ul li a:hover{
+    color: white;
+    text-shadow: 0 0 10px #EFB036;
+}
+
+nav ul li a.active {
+    color: #EFB036;
+    font-weight: 900;
+    text-shadow: 0 0 10px #EFB036;
+    padding: 12px 18px; 
+}
+
+i{
+    color: white;
+}
+
+.icon i{
+    font-size: 24px;
+    padding-left: 20px;
+    transition: transform 0.3s ease;
+}
+
+.icon i:hover {
+    transform: scale(1.2);
+    color: #EFB036;
+}
+
+.nav-indicator {
+    position: absolute;
+    height: 100%;
+    background-color: #EFB036;
+    border-radius: 8px;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 0;
+    transition: all 0.3s ease;
+}
+
+.search-container {
+    position: relative;
+    display: inline-block;
+}
+
+.search-icon {
+    font-size: 24px;
+    padding-left: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.search-icon.active {
+    color: #EFB036;
+}
+
+.search-input {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    padding-right: 5px;
+}
+
+.search-input.active {
+    width: 250px;
+    padding: 8px 15px 8px 35px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    opacity: 1;
+    pointer-events: all;
+    right: -10px;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 8px;
+    padding: 10px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+}
+
+.search-results.active {
+    display: block;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: rgba(239, 176, 54, 0.2);
+}
+
+.search-result-item img {
+    width: 50px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.search-result-info {
+    flex: 1;
+}
+
+.search-result-info h4 {
+    margin: 0;
+    font-size: 14px;
+    color: white;
+}
+
+.search-result-info p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    color: #BFBFBF;
+}
+
+.search-result-type {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.search-result-type.movie {
+    background-color: #EFB036;
+    color: black;
+}
+
+.search-result-type.tv {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Jarak antar elemen */
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.search-icon {
+    font-size: 20px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.search-input {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.user-container {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .bx-user {
+      font-size: 24px;
+    }
+
+    .user-dashboard {
+      position: absolute;
+      top: 30px;
+      right: 0;
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      display: none;
+      padding: 10px;
+      width: 180px;
+      z-index: 100;
+    }
+
+    .user-dashboard ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .user-dashboard ul li {
+      margin: 10px 0;
+    }
+
+    .user-dashboard ul li a {
+      text-decoration: none;
+      color: #eee;
+      font-weight: 500;
+      display: block;
+      padding: 6px 8px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .user-dashboard ul li a:hover {
+      color: #EFB036;
+      background: rgba(239, 176, 54, 0.1);
+    }
+
+        .hero {
+            height: 500px;
+            background: linear-gradient(rgba(65, 55, 3, 0.8), rgba(3, 37, 65, 0.8)), url('https://image.tmdb.org/t/p/original/7WJjFviFBffEJvkAms4uWwbcVUk.jpg') no-repeat center/cover;
+        
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .releases-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .releases-header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 0.5rem;
+            color: white;
+        }
+
+        .releases-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            background-color: white;
+            font-size: 0.9rem;
+            min-width: 150px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(1, 180, 228, 0.2);
+        }
+
+        .month-section {
+            margin-bottom: 3rem;
+        }
+
+        .month-title {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 2rem;
+        }
+
+        .movie-card {
+            background-color: black;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .movie-poster {
+            position: relative;
+            height: 220px;
+            width: 220px;
+            overflow: hidden;
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+
+        .release-date {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .movie-info {
+            padding: 1.5rem;
+        }
+
+        .movie-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: white;
+        }
+
+        .movie-overview {
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+            height: 4.5em;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .movie-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .movie-rating i {
+            color: #f5c518;
+        }
+
+        .movie-lang {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background-color: #f0f0f0;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-secondary);
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: var(--radius);
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+       .bottom-line {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, 
+              rgba(239,176,54,0) 0%, 
+              rgba(239,176,54,0.6) 50%, 
+              rgba(239,176,54,0) 100%);
+  margin: 40px 0 0;
+}
+
+.main-footer {
+ background-color: #141414;
+  color: white;
+  padding: 40px 60px;
+  font-family: sans-serif;
+}
+
+.footer-right a:hover {
+  text-decoration: underline;
+  color: #EFB036;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding-bottom: 20px;
+}
+
+.footer-left {
+  flex: 1;
+  min-width: 250px;
+}
+
+.footer-desc {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: white;
+  max-width: 340px; /* batasi lebar supaya teks turun ke baris berikutnya */
+  word-break: break-word;
+}
+
+
+.footer-right {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+.footer-nav a {
+  color: white;
+  margin: 0 5px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.footer-socials {
+  display: flex;
+  flex-direction: row;
+  gap: 10px; /* jarak antar icon */
+}
+
+
+.footer-socials a {
+  color: #ffffff;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-socials a:hover {
+  background-color: #EFB036;
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin-top: 20px;
+  color: white;
+}
+
+.footer-links a {
+  margin-right: 20px;
+  text-decoration: none;
+  color: white;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+  color: #EFB036;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-right {
+    align-items: flex-start;
+  }
+
+  .footer-nav {
+    margin-top: 10px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-desc {
+    font-size: 16px;
+  }
+
+  .footer-nav a {
+    font-size: 13px;
+  }
+
+  .footer-socials a {
+    font-size: 18px;
+  }
+}
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .hero {
+                height: 400px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .releases-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav ul {
+                gap: 1rem;
+            }
+
+            .user-actions {
+                gap: 1rem;
+            }
+
+            .movies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-card {
+                max-width: 320px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Dark mode toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+    
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #f5f5f5;
+        }
+
+        body.dark-mode .movie-card {
+            background-color: #1e1e1e;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .movie-title {
+            color: #ffffff;
+        }
+
+        body.dark-mode .movie-overview {
+            color: #ffffff;
+        }
+
+        body.dark-mode .month-title {
+            color: #f5f5f5;
+            border-bottom-color: #333;
+        }
+
+        body.dark-mode .filter-select {
+            background-color: #1e1e1e;
+            color: #f5f5f5;
+            border-color: #333;
+        }
+
+        body.dark-mode .movie-lang {
+            background-color: #333;
+            color: #bbb;
+        }
+
+        /* Hamburger menu (hidden on desktop) */
+.menu-toggle {
+    display: none;
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Responsive styles for nav */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  nav {
+    width: 100%;
+  }
+
+  nav ul {
+    position: absolute;
+    top: 90px;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.95);
+    width: 100%;
+    display: none;
+    border-radius: 8px;
+    left: 0;
+    right: 0;
+    z-index: 99;
+  }
+
+  nav ul.show {
+    display: flex;
+  }
+
+  nav ul li a {
+    width: 100%;
+  }
+
+  .nav-indicator {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    height: 400px;
+    padding: 0 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+  }
+
+  .filters {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  .filter-select {
+    min-width: 130px;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .releases-header h2 {
+    font-size: 1.7rem;
+  }
+
+  .movie-poster {
+    height: 260px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    height: 350px;
+    padding: 0 1rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .releases-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters {
+    width: 100%;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .movies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .movie-poster {
+    height: 220px;
+  }
+
+  .movie-info {
+    padding: 1rem;
+  }
+
+  .movie-title {
+    font-size: 1rem;
+  }
+
+  .movie-overview {
+    font-size: 0.85rem;
+  }
+
+  .movie-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    height: auto;
+    padding: 2rem 1rem;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+  }
+
+  .releases-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .movie-poster {
+    height: 180px;
+  }
+
+  .movie-info {
+    padding: 0.8rem;
+  }
+
+  .filter-select {
+    font-size: 0.85rem;
+    padding: 0.4rem;
+  }
+
+  .release-date {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .movie-overview {
+    height: 4em;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="Logo">
+            <img src="../assets/image/logo.png" alt="" class="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" >Home</a></li>
+                <li><a href="tv-show.html">TV Show</a></li>
+                <li><a href="movies.html">Movies</a></li>
+                <li><a href="release.html" class="active">Release</a></li>
+                <div class="nav-indicator"></div> 
+            </ul>
+        </nav>
+        <div class="icon">
+    <div class="search-container">
+        <i class='bx bx-search search-icon'></i>
+        <input type="text" class="search-input" placeholder="search movies">
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <div class="user-container">
+        <i class='bx bx-user' id="userIcon"></i>
+        <div class="user-dashboard" id="userDashboard">
+            <ul>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="watchlist.html">Watchlist</a></li>
+                <li><a href="history.html">History</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="menu-toggle" id="menuToggle">
+        <i class='bx bx-menu'></i>
+    </div>
+    </header>
+
+    <section class="hero">
+        <h1>Upcoming Movie Releases</h1>
+        <p>Stay updated with the latest and upcoming movie releases from around the world. Filter by region, date, and genre to find the movies that interest you.</p>
+    </section>
+
+    <div class="container">
+        <div class="releases-header">
+            <h2>Upcoming Releases</h2>
+            <div class="filters">
+                <select class="filter-select" id="regionFilter">
+                    <option value="all">🌍 All Regions</option>
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="JP">Japan</option>
+                    <option value="KR">South Korea</option>
+                </select>
+                <select class="filter-select" id="genreFilter">
+                    <option value="all">🎭 All Genres</option>
+                    <!-- Will be populated by API -->
+                </select>
+                <select class="filter-select" id="timeFilter">
+                    <option value="month">📅 Next Month</option>
+                    <option value="3months">Next 3 Months</option>
+                    <option value="6months">Next 6 Months</option>
+                    <option value="year">Next Year</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="releasesContainer">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-line"></div>
+   <footer class="main-footer">
+  <div class="footer-top">
+    <div class="footer-left">
+      <p class="footer-desc">
+        Our platform is very affordable & features<br>
+        best updated movies all around the world.
+      </p>
+    </div>
+    <div class="footer-right">
+      <nav class="footer-nav">
+        <a href="#">Home</a> /
+        <a href="movies.html">Movie</a> /
+        <a href="tv-show.html">TV Show</a> /
+        <a href="release.html">Release</a>
+      </nav>
+      <div class="footer-socials">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-links">
+      <a href="privacy.html">Privacy policy</a>
+      <a href="terms-of-use.html">Term of service</a>
+      <a href="FAQ.html">FAQ</a>
+      <a href="help-center.html">Help Center</a>
+
+    </div>
+    
+    <span class="footer-copy">© 2025</span>
+  </div>
+</footer>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+const movieId = urlParams.get('id');
+
+// Search Functionality
+const searchIcon = document.querySelector('.search-icon');
+const searchInput = document.querySelector('.search-input');
+const searchResults = document.getElementById('searchResults');
+let searchTimeout;
+
+// Toggle search input
+searchIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchInput.classList.toggle('active');
+    searchIcon.classList.toggle('active');
+    
+    if (searchInput.classList.contains('active')) {
+        searchInput.focus();
+    } else {
+        searchResults.classList.remove('active');
+        searchInput.value = '';
+    }
+});
+
+// Handle Enter key press
+searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+            window.location.href = `search-results.html?q=${encodeURIComponent(query)}`;
+        }
+    }
+});
+
+// Search as you type
+searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const query = e.target.value.trim();
+    
+    if (query.length >= 2) {
+        searchTimeout = setTimeout(() => {
+            searchAll(query);
+        }, 500);
+    } else {
+        searchResults.classList.remove('active');
+    }
+});
+
+// Close search when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-container')) {
+        searchInput.classList.remove('active');
+        searchIcon.classList.remove('active');
+        searchResults.classList.remove('active');
+        searchInput.value = '';
+    }
+});
+
+// Rest of your existing functions
+function searchAll(query) {
+    fetch(`${baseUrl}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}&language=en-US&page=1&include_adult=false`)
+        .then(res => res.json())
+        .then(data => {
+            displaySearchResults(data.results);
+        })
+        .catch(err => {
+            console.error('Search error:', err);
+        });
+}
+
+function displaySearchResults(results) {
+    if (!results || results.length === 0) {
+        searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+        searchResults.classList.add('active');
+        return;
+    }
+
+    searchResults.innerHTML = '';
+    
+    const filteredResults = results.filter(item => 
+        !item.adult && (item.poster_path || item.profile_path)
+    ).slice(0, 8);
+    
+    filteredResults.forEach(item => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'search-result-item';
+        
+        let title, type, mediaType, imagePath, releaseYear;
+        
+        if (item.media_type === 'movie') {
+            title = item.title;
+            type = 'Movie';
+            mediaType = 'movie';
+            imagePath = item.poster_path;
+            releaseYear = item.release_date ? item.release_date.split('-')[0] : '';
+        } else if (item.media_type === 'tv') {
+            title = item.name;
+            type = 'TV Show';
+            mediaType = 'tv';
+            imagePath = item.poster_path;
+            releaseYear = item.first_air_date ? item.first_air_date.split('-')[0] : '';
+        } else if (item.media_type === 'person') {
+            title = item.name;
+            type = 'Person';
+            mediaType = 'person';
+            imagePath = item.profile_path;
+            releaseYear = '';
+        }
+
+        const link = `detail.html?type=${mediaType}&id=${item.id}`;
+
+        resultItem.innerHTML = `
+            <div style="display: flex; width: 100%; cursor: pointer;">
+                <img src="${imagePath ? imgThumb + imagePath : 'image/no-poster.png'}" alt="${title}">
+                <div class="search-result-info">
+                    <h4>${title}</h4>
+                    <p>${releaseYear}</p>
+                    <span class="search-result-type ${mediaType}">${type}</span>
+                </div>
+            </div>
+        `;
+
+        resultItem.addEventListener("click", () => {
+            if (mediaType !== 'person') {
+                window.location.href = link;
+            }
+        });
+
+        searchResults.appendChild(resultItem);
+    });
+
+    searchResults.classList.add('active');
+}
+
+
+const userIcon = document.getElementById("userIcon");
+    const userDashboard = document.getElementById("userDashboard");
+
+    userIcon.addEventListener("click", () => {
+        userDashboard.style.display = userDashboard.style.display === "block" ? "none" : "block";
+    });
+
+    // Optional: Close dashboard when clicking outside
+    window.addEventListener("click", function (e) {
+        if (!userIcon.contains(e.target) && !userDashboard.contains(e.target)) {
+            userDashboard.style.display = "none";
+        }
+    });
+
+  
+const API_KEY = 'c4d40593b012ddf8fd9bbafe6c7b3a63';
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMG_BASE_URL = 'https://image.tmdb.org/t/p/w300';
+
+const regionSelect = document.getElementById('regionFilter');
+const genreSelect = document.getElementById('genreFilter');
+const timeSelect = document.getElementById('timeFilter');
+const releasesContainer = document.getElementById('releasesContainer');
+
+// Populate genre options
+function loadGenres() {
+    fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}&language=en-US`)
+        .then(res => res.json())
+        .then(data => {
+            data.genres.forEach(genre => {
+                const option = document.createElement('option');
+                option.value = genre.id;
+                option.textContent = genre.name;
+                genreSelect.appendChild(option);
+            });
+        });
+}
+
+// Get date range for filter
+function getDateRange(filterValue) {
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(start.getDate() + 1); 
+
+    const end = new Date(start);
+    switch (filterValue) {
+        case '3months': end.setMonth(end.getMonth() + 3); break;
+        case '6months': end.setMonth(end.getMonth() + 6); break;
+        case 'year': end.setFullYear(end.getFullYear() + 1); break;
+        default: end.setMonth(end.getMonth() + 1);
+    }
+
+    return {
+        start: start.toISOString().split('T')[0],
+        end: end.toISOString().split('T')[0],
+        startDateObj: start 
+    };
+}
+
+
+// Fetch and display upcoming movies with filters
+async function fetchUpcomingMovies() {
+    const region = regionSelect.value;
+    const genre = genreSelect.value;
+    const time = timeSelect.value;
+    const { start, end, startDateObj } = getDateRange(time);
+
+    releasesContainer.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+
+    let allResults = [];
+
+    try {
+        // Ambil 3 halaman pertama
+        for (let page = 1; page <= 3; page++) {
+            let url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&sort_by=release_date.asc&include_adult=false&include_video=false&page=${page}&release_date.gte=${start}&release_date.lte=${end}`;
+            
+            // Tambahkan region hanya jika bukan 'all'
+            if (region !== 'all' && region.trim() !== '') {
+                url += `&region=${region}`;
+            }
+
+            if (genre !== 'all') {
+                url += `&with_genres=${genre}`;
+            }
+
+            const res = await fetch(url);
+            const data = await res.json();
+
+            // Gabungkan hasil
+            allResults = allResults.concat(data.results);
+        }
+
+        // Hilangkan duplikat berdasarkan id (opsional)
+        const uniqueResults = [...new Map(allResults.map(movie => [movie.id, movie])).values()];
+
+        renderMovies(uniqueResults, startDateObj);
+
+    } catch (err) {
+        releasesContainer.innerHTML = '<p style="color:white;">Failed to load upcoming releases.</p>';
+        console.error(err);
+    }
+}
+
+
+
+
+// Render movie cards
+function renderMovies(movies, minReleaseDate) {
+    const filtered = movies.filter(movie => {
+        if (!movie.release_date) return false;
+        const releaseDate = new Date(movie.release_date);
+        return releaseDate >= minReleaseDate && movie.poster_path;
+    });
+
+    if (!filtered.length) {
+        releasesContainer.innerHTML = '<p style="color:white;">No upcoming movies found.</p>';
+        return;
+    }
+
+    releasesContainer.innerHTML = `
+        <div class="movies-grid">
+            ${filtered.map(movie => `
+                <div class="movie-card">
+                    <img src="${IMG_BASE_URL + movie.poster_path}" alt="${movie.title}">
+                    <div class="movie-info">
+                        <h4>${movie.title}</h4>
+                        <p>${movie.release_date}</p>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+
+
+// Event listeners
+regionSelect.addEventListener('change', fetchUpcomingMovies);
+genreSelect.addEventListener('change', fetchUpcomingMovies);
+timeSelect.addEventListener('change', fetchUpcomingMovies);
+
+// Load initial
+loadGenres();
+fetchUpcomingMovies();
+
+        
+    </script>
+
+    <script>
+  const menuToggle = document.getElementById("menuToggle");
+  const navList = document.querySelector("nav ul");
+
+  menuToggle.addEventListener("click", () => {
+    navList.classList.toggle("show");
+  });
+</script>
+</body>
+</html>

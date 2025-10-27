@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!--Asked Question-->
+    <section id="Asked">
+        <div class="asked-header">
+            <div class="asked-text">
+                <h1 class="asked-title">Frequently Asked Questions</h1>
+                <p>Got questions? We've got answers! Check out our FAQ section to find answers to the most common questions about WATCHITALL.</p>
+            </div>
+        </div>
+  
+        
+        <div class="faq-container">
+            <div class="faq-column">
+                <!-- 3 Pertanyaan KIRI -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-number">01</span>
+                        <span class="faq-text">What is WatchItAll?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">Watchitall is a streaming service that allows you to watch movies and shows on demand.</div>
+                </div>
+  
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-number">02</span>
+                        <span class="faq-text">How much does WatchItAll cost?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">Watchitall provides 3 plans with different prices, there is a basic plan priced at RP 55K, a standard plan priced at RP 125K, a premium plan priced at RP 225K.</div>
+                </div>
+  
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-number">03</span>
+                        <span class="faq-text">What content is available on WatchItAll?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">In Watchitall you can stream a wide variety of content including blockbuster movies, hit TV series, documentaries, and other films.</div>
+                </div>
+            </div>
+  
+        <div class="faq-column">
+      
+            <!-- 3 Pertanyaan KANAN -->
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span class="faq-number">04</span>
+                    <span class="faq-text">Wow to watch movies on watchitall?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">So first you register to create an account, then you choose a membership plan, then you pay, and log in to your account, after logging in you can watch films.</div>
+            </div>
+  
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span class="faq-number">05</span>
+                    <span class="faq-text">What are the WatchItAll payment methods?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">We accept all payment and debit cards, and selected digital wallets depending on your region.</div>
+            </div>
+  
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span class="faq-number">06</span>
+                    <span class="faq-text">How do I contact customer support?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">You can contact our support via the Help Center by sending the form.</div>
+            </div>
+        </div>
+    </section>
+
+<!-- FOOTER -->
+<div class="bottom-line"></div>
+   <footer class="main-footer">
+  <div class="footer-top">
+    <div class="footer-left">
+      <p class="footer-desc">
+        Our platform is very affordable & features<br>
+        best updated movies all around the world.
+      </p>
+    </div>
+    <div class="footer-right">
+      <div class="footer-socials">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-google"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-links">
+      <a href="privacy.html">Privacy policy</a>
+      <a href="terms-of-use.html">Term of service</a>
+      <a href="FAQ.html">FAQ</a>
+      <a href="help-center.html">Help Center</a>
+
+    </div>
+    
+    <span class="footer-copy">© 2025</span>
+  </div>
+</footer>
+
+<!-- CSS -->
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Judson:ital@1&family=Manrope:wght@200..800&display=swap');
+
+body{
+    background-color: black;
+    font-family: "Manrope", sans-serif;
+    font-style: bold 700;
+    position: relative;
+    margin: 0;
+
+ }
+
+ /* Asked Question */
+
+ #Asked {
+    padding: 40px 20px;
+    background-color: #000;
+    color: white;
+  }
+  
+  .asked-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .asked-text {
+    flex: 1;
+    min-width: 250px;
+    padding-left: 2rem;
+  }
+  
+  .asked-title {
+    margin: 0 0 10px;
+    font-size: 25px;
+  }
+  
+  .askquestion-btn { 
+    display: inline-block;
+    justify-content: start;
+    align-items: flex-start;
+    width: 10%;
+    gap: 5px;
+    height: 40px;
+    padding: 6px 20px;
+    background-color: #f7a823;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .askquestion-btn:hover {
+    box-shadow: 0 0 10px #EFB036;
+  }
+
+  .faq-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 40px;
+  justify-content: center; /* optional */
+}
+
+.faq-column {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px; /* to avoid overly stretched columns on wide screens */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+  
+  .faq-item {
+    background-color: #111;
+    padding: 20px;
+    border-radius: 8px;
+    color: white;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.05);
+  }
+  
+  .faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .faq-number {
+    background-color: #1f1f1f;
+    border-radius: 6px;
+    padding: 5px 12px;
+    margin-right: 10px;
+    font-size: 14px;
+  }
+  
+  .faq-text {
+    flex: 1;
+    font-size: 14px;
+  }
+  
+  .faq-toggle {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .faq-answer {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #ccc;
+  }
+
+  .faq-item:hover {
+    box-shadow: 0 0 10px #EFB036;
+    color: #EFB036;
+    transition: 0.4s;
+  }
+  .faq-item.active {
+    box-shadow: 0 0 10px #EFB036;
+    color: #EFB036;
+  }
+
+  /* footer */
+.bottom-line {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, 
+              rgba(239,176,54,0) 0%, 
+              rgba(239,176,54,0.6) 50%, 
+              rgba(239,176,54,0) 100%);
+  margin: 40px 0 0;
+}
+
+.main-footer {
+  background-color: #0f0f0f;
+  color: white;
+  padding: 50px 5% 30px;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding-bottom: 30px;
+}
+
+.footer-left {
+  flex: 1;
+  min-width: 250px;
+}
+
+.footer-desc {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: white;
+  max-width: 340px; /* batasi lebar supaya teks turun ke baris berikutnya */
+  word-break: break-word;
+}
+
+.footer-right {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 25px;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-end;
+}
+
+.footer-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  padding: 5px 0;
+  position: relative;
+}
+
+.footer-nav a:hover {
+  color: #EFB036;
+}
+
+.footer-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #EFB036;
+  transition: width 0.3s ease;
+}
+
+.footer-nav a:hover::after {
+  width: 100%;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 15px;
+}
+
+.footer-socials a {
+  color: #ffffff;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-socials a:hover {
+  background-color: #EFB036;
+  transform: translateY(-3px) scale(1.1);
+  color: #000;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 30px;
+ 
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #EFB036;
+  text-decoration: underline;
+}
+
+.footer-copy {
+  font-weight: 300;
+}
+
+  
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const faqItems = document.querySelectorAll(".faq-item");
+
+    faqItems.forEach(item => {
+      const question = item.querySelector(".faq-question");
+      const answer = item.querySelector(".faq-answer");
+      const toggle = item.querySelector(".faq-toggle");
+
+      // Atur tinggi awal jadi 0 agar bisa slide
+      answer.style.maxHeight = "0px";
+      answer.style.overflow = "hidden";
+      answer.style.transition = "max-height 0.3s ease-out";
+
+      question.addEventListener("click", () => {
+        const isOpen = item.classList.contains("active");
+
+        // Tutup semua FAQ lain (opsional: jika ingin hanya satu terbuka)
+        faqItems.forEach(i => {
+          i.classList.remove("active");
+          i.querySelector(".faq-answer").style.maxHeight = "0px";
+          i.querySelector(".faq-toggle").textContent = "+";
+        });
+
+        // Toggle FAQ saat ini
+        if (!isOpen) {
+          item.classList.add("active");
+          answer.style.maxHeight = answer.scrollHeight + "px";
+          toggle.textContent = "−";
+        } else {
+          item.classList.remove("active");
+          answer.style.maxHeight = "0px";
+          toggle.textContent = "+";
+        }
+      });
+    });
+});
+</script>
+
+</body>
+</html>

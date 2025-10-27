@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="module">
+  import { auth, db } from '../js/firebase-init.js';
+import {
+  onAuthStateChanged,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import {
+  doc,
+  getDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  const docRef = doc(db, "users", user.email);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists() || !docSnap.data().isPaid) {
+    window.location.href = 'payment.html';
+    return;
+  }
+
+  const data = docSnap.data();
+
+  
+  if (!data.MemberAt) {
+    const now = new Date().toISOString();
+    await updateDoc(docRef, { MemberAt: now });
+    data.MemberAt = now;
+  }
+
+ 
+  document.querySelector('.profile-info h2').innerText = user.email.split('@')[0];
+  document.querySelector('.profile-info p').innerText = user.email;
+  document.querySelector('.membership-badge').innerText = data.plan;
+  document.getElementById('memberSince').innerText = formatDate(data.MemberAt);
+  document.getElementById('expiredDate').innerText = getExpireDate(data.MemberAt);
+  document.querySelector('.plan-title').innerText = data.plan;
+  document.querySelector('.plan-price').innerText = `Rp ${data.price.toLocaleString("id-ID")}/bulan`;
+  document.getElementById("emailConfirm").value = user.email;
+  document.querySelectorAll('.email-sent-message strong').forEach(el => el.innerText = user.email);
+
+  
+  const sendResetEmailBtn = document.getElementById('sendResetEmailBtn');
+  const emailSentMessage = document.getElementById('emailSentMessage');
+  const resendEmailBtn = document.getElementById('resendEmailBtn');
+  const emailInput = document.getElementById('emailConfirm');
+
+  async function sendReset(email) {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      emailSentMessage.classList.add('show');
+      sendResetEmailBtn.disabled = true;
+      sendResetEmailBtn.innerHTML = '<i class="fas fa-check"></i> Email Sent';
+
+      setTimeout(() => {
+        sendResetEmailBtn.disabled = false;
+        sendResetEmailBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Password Reset Email';
+      }, 5000);
+    } catch (error) {
+      alert("Gagal mengirim email reset password: " + error.message);
+      console.error(error);
+    }
+  }
+
+  sendResetEmailBtn.addEventListener('click', function () {
+    const email = emailInput.value.trim();
+    if (email) sendReset(email);
+  });
+
+  resendEmailBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    if (email) sendReset(email);
+  });
+});
+
+
+function formatDate(dateStr) {
+  if (!dateStr) return "-";
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("id-ID", {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+
+function getExpireDate(startDateStr) {
+  if (!startDateStr) return "-";
+  const date = new Date(startDateStr);
+  date.setMonth(date.getMonth() + 1); 
+  return formatDate(date.toISOString());
+}
+
+
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Watchitall - Account</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            list-style: none;
+            text-decoration: none;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* Header Styles */
+       header{
+  width: 100%;
+  height: 90px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 30px;
+  border-radius: 0 0 10px 10px;
+  margin: 0 auto;
+  backdrop-filter: blur(4px);
+  position: absolute;
+  top: 0;
+  z-index: 10;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.Logo {
+  padding-top: 8px;
+  width: 150px;
+  height: auto;
+}
+
+
+
+nav ul{
+    display: flex;
+    background: transparent;
+    position: relative;
+}
+
+nav ul li a{
+    color: #BFBFBF;
+    display: block;
+    margin: 5px 8px;
+    padding: 12px 18px;
+    transition: 0.2s;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+nav ul li a:hover{
+    color: white;
+    text-shadow: 0 0 10px #EFB036;
+}
+
+nav ul li a.active {
+    color: #EFB036;
+    font-weight: 900;
+    text-shadow: 0 0 10px #EFB036;
+    padding: 12px 18px; 
+}
+
+i{
+    color: white;
+}
+
+.icon i{
+    font-size: 24px;
+    padding-left: 20px;
+    transition: transform 0.3s ease;
+}
+
+.icon i:hover {
+    transform: scale(1.2);
+    color: #EFB036;
+}
+
+.nav-indicator {
+    position: absolute;
+    height: 100%;
+    background-color: #EFB036;
+    border-radius: 8px;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 0;
+    transition: all 0.3s ease;
+}
+
+.search-container {
+    position: relative;
+    display: inline-block;
+}
+
+.search-icon {
+    font-size: 24px;
+    padding-left: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.search-icon.active {
+    color: #EFB036;
+}
+
+.search-input {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    padding-right: 5px;
+}
+
+.search-input.active {
+    width: 250px;
+    padding: 8px 15px 8px 35px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    opacity: 1;
+    pointer-events: all;
+    right: -10px;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 8px;
+    padding: 10px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
+}
+
+.search-results.active {
+    display: block;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-result-item:hover {
+    background-color: rgba(239, 176, 54, 0.2);
+}
+
+.search-result-item img {
+    width: 50px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.search-result-info {
+    flex: 1;
+}
+
+.search-result-info h4 {
+    margin: 0;
+    font-size: 14px;
+    color: white;
+}
+
+.search-result-info p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    color: #BFBFBF;
+}
+
+.search-result-type {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.search-result-type.movie {
+    background-color: #EFB036;
+    color: black;
+}
+
+.search-result-type.tv {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Jarak antar elemen */
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.search-icon {
+    font-size: 20px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.search-input {
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.user-container {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .bx-user {
+      font-size: 24px;
+    }
+
+    .user-dashboard {
+      position: absolute;
+      top: 30px;
+      right: 0;
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      display: none;
+      padding: 10px;
+      width: 180px;
+      z-index: 100;
+    }
+
+    .user-dashboard ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .user-dashboard ul li {
+      margin: 10px 0;
+    }
+
+    .user-dashboard ul li a {
+      text-decoration: none;
+      color: #eee;
+      font-weight: 500;
+      display: block;
+      padding: 6px 8px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .user-dashboard ul li a:hover {
+      color: #EFB036;
+      background: rgba(239, 176, 54, 0.1);
+    }
+
+    .user
+
+        /* Main Content Styles */
+        main {
+            padding: 50px 0;
+            
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #f6f5f2;
+            font-weight: 600;
+            text-align: left;
+            padding-top: 145px;
+            
+        }
+
+        .account-container {
+            border-top: 1px solid #2a2a2a;
+            padding-top: 25px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* Account Content Styles */
+        .account-content {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, rgba(239, 176, 54, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 4px solid #EFB036;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #EFB036;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: #121212;
+            box-shadow: 0 5px 15px rgba(239, 176, 54, 0.4);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .profile-info p {
+            color: #b0b0b0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .membership-info {
+            background-color: rgba(239, 176, 54, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(239, 176, 54, 0.2);
+        }
+
+        .membership-info h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #EFB036;
+            font-weight: 600;
+        }
+
+        .membership-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .membership-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: #b0b0b0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-size: 18px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .membership-badge {
+            background-color: #EFB036;
+            color: #121212;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 30px;
+            background-color: #242424;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .form-section h3 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #EFB036;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section h3 i {
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #3a3a3a;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #EFB036;
+            box-shadow: 0 0 0 2px rgba(239, 176, 54, 0.2);
+        }
+
+        .btn {
+            background-color: #EFB036;
+            color: #ffffff;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            background-color: #f7c157;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 176, 54, 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #EFB036;
+            color: #EFB036;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(239, 176, 54, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .subscription-details {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: rgba(239, 176, 54, 0.05);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .plan-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .plan-price {
+            font-size: 24px;
+            color: #EFB036;
+            font-weight: 700;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .plan-features li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-features li i {
+            color: #EFB036;
+        }
+
+        .billing-history {
+            margin-top: 30px;
+        }
+
+        .billing-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .billing-date {
+            color: #b0b0b0;
+        }
+
+        .section-description {
+            color: #b0b0b0;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        /* Reset Password Styles */
+        .reset-password-container {
+            position: relative;
+        }
+        
+        .reset-password-form {
+            margin-bottom: 20px;
+        }
+        
+        .email-sent-message {
+            background-color: rgba(239, 176, 54, 0.1);
+            border-left: 4px solid #EFB036;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .email-sent-message.show {
+            display: block;
+            opacity: 1;
+        }
+        
+        .email-sent-message i {
+            color: #EFB036;
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        .email-sent-message p {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+        
+        .email-sent-message small {
+            color: #fffdfd;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .account-content {
+                padding: 20px;
+            }
+            
+            .membership-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1a1a1a;
+            padding: 20px 0;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 1024px) {
+    .account-content {
+        padding: 30px;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 32px;
+    }
+
+    .profile-info h2 {
+        font-size: 28px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .subscription-details {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .membership-details {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px;
+        text-align: left;
+    }
+
+    .account-content {
+        padding: 20px;
+    }
+
+    .profile-header {
+        padding: 20px;
+    }
+
+    .membership-details {
+        grid-template-columns: 1fr;
+    }
+
+    .subscription-details {
+        padding: 15px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 26px;
+    }
+
+    .profile-info h2 {
+        font-size: 22px;
+    }
+
+    .form-control {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .plan-price {
+        font-size: 20px;
+    }
+
+    .plan-title {
+        font-size: 16px;
+    }
+
+    .membership-info h3,
+    .form-section h3 {
+        font-size: 20px;
+    }
+}
+
+/* Hamburger menu (hidden on desktop) */
+.menu-toggle {
+    display: none;
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Responsive styles for nav */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  nav {
+    width: 100%;
+  }
+
+  nav ul {
+    position: absolute;
+    top: 90px;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.95);
+    width: 100%;
+    display: none;
+    border-radius: 8px;
+    left: 0;
+    right: 0;
+    z-index: 99;
+  }
+
+  nav ul.show {
+    display: flex;
+  }
+
+  nav ul li a {
+    width: 100%;
+  }
+
+  .nav-indicator {
+    display: none;
+  }
+}
+    </style>
+    <!-- Google Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+     <header>
+        <div class="Logo">
+            <img src="../assets/image/logo.png" alt="" class="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="tv-show.html">TV Show</a></li>
+                <li><a href="movies.html">Movies</a></li>
+                <li><a href="release.html">Release</a></li>
+                <div class="nav-indicator"></div> 
+            </ul>
+        </nav>
+        <div class="icon">
+    <div class="search-container">
+        <i class='bx bx-search search-icon'></i>
+        <input type="text" class="search-input" placeholder="search movies">
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <div class="user-container">
+        <i class='bx bx-user' id="userIcon"></i>
+        <div class="user-dashboard" id="userDashboard">
+          <ul>
+            <li id="account" class="active"><a href="account.html">Account</a></li>
+            <li id="watchlistItem"><a href="watchlist.html">Watchlist</a></li>
+            <li id="historyItem"><a href="history.html">Watch History</a></li>
+            <li><a href="#" id="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="menu-toggle" id="menuToggle">
+        <i class='bx bx-menu'></i>
+    </div>
+    </header>
+
+    <script type="module">
+  import { auth } from '../js/firebase-init.js';
+  import { signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+  document.getElementById("logout-btn").addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      await signOut(auth);
+
+      // Bersihkan localStorage
+      localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("email");
+
+      // Tampilkan notifikasi logout
+      alert("Anda telah logout dari akun Anda.");
+
+      // Redirect ke unpaid.html
+      window.location.href = "unpaid.html";
+    } catch (error) {
+      alert("Gagal logout: " + error.message);
+    }
+  });
+</script>
+
+    <main class="container">
+        <h1>My Account</h1>
+
+        <div class="account-container">
+            <div class="account-content">
+                <div class="profile-header">
+                    <div class="profile-avatar">JS</div>
+                    <div class="profile-info">
+                        <span class="membership-badge">Premium</span>
+                        <h2>John Smith</h2>
+                        <p>john.smith@example.com</p>
+                    </div>
+                </div>
+
+                <div class="membership-info">
+                    <h3><i class="fas fa-crown"></i> Membership Information</h3>
+                    <div class="membership-details">
+                        <div class="membership-detail">
+                            <span class="detail-label">Member Since</span>
+                            <span class="detail-value" id="memberSince">March 15, 2023</span>
+                        </div>
+                        <div class="membership-detail">
+                            <span class="detail-label">Subscription Plan</span>
+                            <span class="plan-title">Premium</span>
+                        </div>
+                        <div class="membership-detail">
+                            <span class="detail-label">Expired Date</span>
+                            <span class="detail-value" id="expiredDate">June 15, 2025</span>
+                        </div>
+                        <div class="membership-detail">
+                            <span class="detail-label">Account Status</span>
+                            <span class="detail-value">Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-credit-card"></i> Membership Plan</h3>
+                    <div class="subscription-details">
+                        <div>
+                            <div class="plan-title">Premium</div>
+                        </div>
+                        <div class="plan-price">$14.99/month</div>
+                    </div>
+                    
+                    
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-lock"></i> Reset Password</h3>
+                    <p class="section-description">To reset your password, we'll send instructions to your registered email address.</p>
+                    
+                    <div class="reset-password-container">
+                        <div class="reset-password-form">
+                            <div class="form-group">
+                                <label for="emailConfirm">Confirm your email address</label>
+                                <input type="email" id="emailConfirm" class="form-control" value="john.smith@example.com" readonly>
+                            </div>
+                            <button class="btn" id="sendResetEmailBtn"><i class="fas fa-paper-plane"></i> Send Password Reset Email</button>
+                        </div>
+                        
+                        <div class="email-sent-message" id="emailSentMessage">
+                            <p><i class="fas fa-check-circle"></i> <strong>Password reset email sent!</strong></p>
+                            <p>We've sent password reset instructions to <strong>john.smith@example.com</strong>.</p>
+                            <small>If you don't see the email, please check your spam folder or <a href="#" id="resendEmailBtn" style="color: #EFB036; text-decoration: underline;">click here to resend</a>.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_KEY = 'c4d40593b012ddf8fd9bbafe6c7b3a63'; 
+
+let featuredList = [];
+
+const apiKey = 'c4d40593b012ddf8fd9bbafe6c7b3a63';
+const baseUrl = 'https://api.themoviedb.org/3';
+const imgUrl = 'https://image.tmdb.org/t/p/original';
+const imgThumb = 'https://image.tmdb.org/t/p/w500';
+
+const urlParams = new URLSearchParams(window.location.search);
+const movieId = urlParams.get('id');
+
+// Search Functionality
+const searchIcon = document.querySelector('.search-icon');
+const searchInput = document.querySelector('.search-input');
+const searchResults = document.getElementById('searchResults');
+let searchTimeout;
+
+// Toggle search input
+searchIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchInput.classList.toggle('active');
+    searchIcon.classList.toggle('active');
+    
+    if (searchInput.classList.contains('active')) {
+        searchInput.focus();
+    } else {
+        searchResults.classList.remove('active');
+        searchInput.value = '';
+    }
+});
+
+// Handle Enter key press
+searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+            window.location.href = `search-results.html?q=${encodeURIComponent(query)}`;
+        }
+    }
+});
+
+// Search as you type
+searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const query = e.target.value.trim();
+    
+    if (query.length >= 2) {
+        searchTimeout = setTimeout(() => {
+            searchAll(query);
+        }, 500);
+    } else {
+        searchResults.classList.remove('active');
+    }
+});
+
+// Close search when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-container')) {
+        searchInput.classList.remove('active');
+        searchIcon.classList.remove('active');
+        searchResults.classList.remove('active');
+        searchInput.value = '';
+    }
+});
+
+// Rest of your existing functions
+function searchAll(query) {
+    fetch(`${baseUrl}/search/multi?api_key=${apiKey}&query=${encodeURIComponent(query)}&language=en-US&page=1&include_adult=false`)
+        .then(res => res.json())
+        .then(data => {
+            displaySearchResults(data.results);
+        })
+        .catch(err => {
+            console.error('Search error:', err);
+        });
+}
+
+function displaySearchResults(results) {
+    if (!results || results.length === 0) {
+        searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+        searchResults.classList.add('active');
+        return;
+    }
+
+    searchResults.innerHTML = '';
+    
+    const filteredResults = results.filter(item => 
+        !item.adult && (item.poster_path || item.profile_path)
+    ).slice(0, 8);
+    
+    filteredResults.forEach(item => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'search-result-item';
+        
+        let title, type, mediaType, imagePath, releaseYear;
+        
+        if (item.media_type === 'movie') {
+            title = item.title;
+            type = 'Movie';
+            mediaType = 'movie';
+            imagePath = item.poster_path;
+            releaseYear = item.release_date ? item.release_date.split('-')[0] : '';
+        } else if (item.media_type === 'tv') {
+            title = item.name;
+            type = 'TV Show';
+            mediaType = 'tv';
+            imagePath = item.poster_path;
+            releaseYear = item.first_air_date ? item.first_air_date.split('-')[0] : '';
+        } else if (item.media_type === 'person') {
+            title = item.name;
+            type = 'Person';
+            mediaType = 'person';
+            imagePath = item.profile_path;
+            releaseYear = '';
+        }
+
+        const link = `detail.html?type=${mediaType}&id=${item.id}`;
+
+        resultItem.innerHTML = `
+            <div style="display: flex; width: 100%; cursor: pointer;">
+                <img src="${imagePath ? imgThumb + imagePath : 'image/no-poster.png'}" alt="${title}">
+                <div class="search-result-info">
+                    <h4>${title}</h4>
+                    <p>${releaseYear}</p>
+                    <span class="search-result-type ${mediaType}">${type}</span>
+                </div>
+            </div>
+        `;
+
+        resultItem.addEventListener("click", () => {
+            if (mediaType !== 'person') {
+                window.location.href = link;
+            }
+        });
+
+        searchResults.appendChild(resultItem);
+    });
+
+    searchResults.classList.add('active');
+}
+
+
+const userIcon = document.getElementById("userIcon");
+    const userDashboard = document.getElementById("userDashboard");
+
+    userIcon.addEventListener("click", () => {
+        userDashboard.style.display = userDashboard.style.display === "block" ? "none" : "block";
+    });
+
+    // Optional: Close dashboard when clicking outside
+    window.addEventListener("click", function (e) {
+        if (!userIcon.contains(e.target) && !userDashboard.contains(e.target)) {
+            userDashboard.style.display = "none";
+        }
+    });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple reset password functionality
+            const sendResetEmailBtn = document.getElementById('sendResetEmailBtn');
+            const emailSentMessage = document.getElementById('emailSentMessage');
+            const resendEmailBtn = document.getElementById('resendEmailBtn');
+            
+            sendResetEmailBtn.addEventListener('click', function() {
+                // Show the confirmation message
+                emailSentMessage.classList.add('show');
+                
+                // Optional: Disable the send button temporarily
+                sendResetEmailBtn.disabled = true;
+                sendResetEmailBtn.innerHTML = '<i class="fas fa-check"></i> Email Sent';
+                
+                // Re-enable after a few seconds
+                setTimeout(() => {
+                    sendResetEmailBtn.disabled = false;
+                    sendResetEmailBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Password Reset Email';
+                }, 3000);
+            });
+            
+            resendEmailBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Simulate resending email
+                emailSentMessage.classList.remove('show');
+                
+                setTimeout(() => {
+                    emailSentMessage.classList.add('show');
+                }, 100);
+            });
+        });
+    </script>
+    <script>
+  const menuToggle = document.getElementById("menuToggle");
+  const navList = document.querySelector("nav ul");
+
+  menuToggle.addEventListener("click", () => {
+    navList.classList.toggle("show");
+  });
+</script>
+</body>
+</html>
