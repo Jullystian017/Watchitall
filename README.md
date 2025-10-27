@@ -5,8 +5,6 @@ Built with **HTML, CSS, and JavaScript**, integrated with **Firebase** for authe
 
 Only users who have **paid for a subscription** can stream movies.
 
----
-
 ## 🚀 Features
 
 ### 🔐 Authentication & User Accounts
@@ -34,8 +32,6 @@ Only users who have **paid for a subscription** can stream movies.
 - Top 10 trending movies
 - Production categories (Disney+, Marvel, etc.)
 - Recommended movies based on preferences
-
----
 
 ## 🧱 Tech Stack
 
